@@ -3,9 +3,11 @@ package com.example.mgalante.marvelprojectbase.views.resumecharacter;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -23,7 +25,7 @@ public class ShowCharacter extends BaseActivity {
     private Characters mCharacter;
 
     @Bind(R.id.main_information_holder)
-    LinearLayout mHolder;
+    RelativeLayout mHolder;
     @Bind(R.id.character_image)
     ImageView mAvatar;
     @Bind(R.id.name)
@@ -40,6 +42,8 @@ public class ShowCharacter extends BaseActivity {
     TabLayout mTablayout;
     @Bind(R.id.viewpager)
     ViewPager mViewPager;
+    @Bind(R.id.btn_add)
+    ImageButton mFloatingButton;
     //private SectionsPagerAdapter mSectionsPagerAdapter;
 
     @Override
@@ -59,6 +63,13 @@ public class ShowCharacter extends BaseActivity {
         mName.setText(mCharacter.getName());
         mDescription.setText(mCharacter.getDescription());
 
+        mFloatingButton.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+        mFloatingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
     }
 
