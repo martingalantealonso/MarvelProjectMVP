@@ -5,13 +5,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.mgalante.marvelprojectbase.R;
 import com.example.mgalante.marvelprojectbase.api.ServiceMarvel;
 import com.example.mgalante.marvelprojectbase.api.entities.Characters;
-import com.example.mgalante.marvelprojectbase.control.adapters.CharactersRecyclerViewAdapter;
+import com.example.mgalante.marvelprojectbase.control.adapters.adapters.CharactersRecyclerViewAdapter;
+import com.example.mgalante.marvelprojectbase.control.adapters.callbacks.CharacterListCallBack;
 import com.example.mgalante.marvelprojectbase.views.BaseActivity;
 
 import java.util.ArrayList;
@@ -20,7 +22,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class MainActivity extends BaseActivity implements MainContract.View {
+public class MainActivity extends BaseActivity implements MainContract.View, CharacterListCallBack {
 
     @Bind(R.id.heroName)
     EditText mEdTHeroName;
@@ -65,10 +67,9 @@ public class MainActivity extends BaseActivity implements MainContract.View {
 
 
         characters = new ArrayList<>();
-        adapter = new CharactersRecyclerViewAdapter(characters, this);
+        adapter = new CharactersRecyclerViewAdapter(characters, this, this);
         mListItem.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         mListItem.setAdapter(adapter);
-
 
     }
 
@@ -103,5 +104,10 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     @Override
     public void showProgressBar(boolean show) {
 
+    }
+
+    @Override
+    public void onClickCharacter(View v, Characters item) {
+        Toast.makeText(this, item.getName(), Toast.LENGTH_LONG).show();
     }
 }
