@@ -1,12 +1,17 @@
 package com.example.mgalante.marvelprojectbase.views.resumecharacter;
 
+import android.animation.Animator;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.view.ViewAnimationUtils;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -44,6 +49,10 @@ public class ShowCharacter extends BaseActivity {
     ViewPager mViewPager;
     @Bind(R.id.btn_add)
     ImageButton mFloatingButton;
+    @Bind(R.id.txtInfoFav)
+    TextView mTxtInfoFav;
+    @Bind((R.id.llEditTextHolder))
+    LinearLayout llTextHolder;
     //private SectionsPagerAdapter mSectionsPagerAdapter;
 
     @Override
@@ -63,18 +72,61 @@ public class ShowCharacter extends BaseActivity {
         mName.setText(mCharacter.getName());
         mDescription.setText(mCharacter.getDescription());
 
+        llTextHolder.setVisibility(View.INVISIBLE);
+
         mFloatingButton.setImageResource(R.drawable.ic_favorite_border_black_24dp);
         mFloatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                StartBtnAnimation(v);
             }
         });
 
+        windowTransition();
+    }
+
+    private void windowTransition() {
+        AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
+        alphaAnimation.setDuration(2000);
+        mFloatingButton.startAnimation(alphaAnimation);
+            }
+
+
+    private void StartBtnAnimation(View view) {
+        int cx = llTextHolder.getRight() - 30;
+        int cy = llTextHolder.getBottom() - 60;
+        int finalRadius = Math.max(view.getWidth(), llTextHolder.getHeight());
+        Animator anim = ViewAnimationUtils.createCircularReveal(llTextHolder, cx, cy, 0, finalRadius);
+        llTextHolder.setVisibility(View.VISIBLE);
+        anim.start();
     }
 
     @Override
     public int getLayoutId() {
         return R.layout.activity_show_character;
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
+        alphaAnimation.setDuration(100);
+        mFloatingButton.startAnimation(alphaAnimation);
+        alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mFloatingButton.setVisibility(View.GONE);
+                finishAfterTransition();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
     }
 }

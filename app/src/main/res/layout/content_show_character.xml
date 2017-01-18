@@ -24,24 +24,29 @@
                 android:minHeight="220dp"
                 android:scaleType="fitXY"
                 android:transitionName="t_item_character" />
-            <!--
-                                <LinearLayout
-                                    android:id="@+id/llEditTextHolder"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:background="#95000000">
 
-                                    <Button
-                                        android:id="@+id/etTodo"
-                                        style="@style/Widget.AppCompat.Button.Borderless"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="top|left"
-                                        android:layout_marginLeft="20dp"
-                                        android:layout_marginRight="20dp" />
+            <LinearLayout
+                android:id="@+id/llEditTextHolder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#95000000">
 
-                                </LinearLayout>
-                                -->
+                <TextView
+                    android:id="@+id/txtInfoFav"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:textColor="@color/colorAccent"
+                    android:text="Hello World"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
         </FrameLayout>
 
         <!--BODY      Name & Description -->
@@ -79,8 +84,7 @@
             android:layout_marginRight="20dp"
             android:background="@drawable/btn_background"
             android:contentDescription="@null"
-            android:elevation="@dimen/button_elevation"
-            />
+            android:elevation="@dimen/button_elevation" />
 
 
     </RelativeLayout>
