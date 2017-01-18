@@ -12,12 +12,14 @@
         android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:orientation="horizontal"
-        android:transitionName="t_item_character">
+        >
 
         <ImageView
             android:id="@+id/character_image"
             android:layout_width="60dp"
-            android:layout_height="60dp" />
+            android:layout_height="60dp"
+            android:scaleType="fitXY"
+            android:transitionName="t_item_character"/>
 
 
         <LinearLayout
