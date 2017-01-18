@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MarvelProjectBase</string>
+    <string name="app_name">Marvel_V2.0</string>
     <string name="escribe_el_nombre">Escribe el nombre...</string>
     <string name="busca_tu_superh_roe">Busca tu superhéroe</string>
     <string name="sin_resultados">Sin resultados</string>
