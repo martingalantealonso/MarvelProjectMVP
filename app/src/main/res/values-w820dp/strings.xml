@@ -9,9 +9,6 @@
     <string name="comiclink">Comics Links</string>
     <string name="recursos">Recursos</string>
     <string name="error">Error</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="comics">Comics</string>
     <string name="events">Events</string>
 </resources>
