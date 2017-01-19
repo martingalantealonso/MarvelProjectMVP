@@ -20,8 +20,8 @@ import android.widget.Toast;
 import com.example.mgalante.marvelprojectbase.R;
 import com.example.mgalante.marvelprojectbase.api.ServiceMarvel;
 import com.example.mgalante.marvelprojectbase.api.entities.Characters;
-import com.example.mgalante.marvelprojectbase.control.adapters.adapters.CharactersRecyclerViewAdapter;
-import com.example.mgalante.marvelprojectbase.control.adapters.callbacks.CharacterListCallBack;
+import com.example.mgalante.marvelprojectbase.control.adapters.CharactersRecyclerViewAdapter;
+import com.example.mgalante.marvelprojectbase.control.callbacks.CharacterListCallBack;
 import com.example.mgalante.marvelprojectbase.views.BaseActivity;
 import com.example.mgalante.marvelprojectbase.views.resumecharacter.ShowCharacter;
 import com.google.gson.Gson;
@@ -110,16 +110,6 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
     }
 
     @Override
-    public void showList(boolean show) {
-
-    }
-
-    @Override
-    public void showProgressBar(boolean show) {
-
-    }
-
-    @Override
     public void onClickCharacter(View v, Characters item) {
 /*
         //showMessage(item.getName());
@@ -130,7 +120,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
         i.putExtra(EXTRA_CHARACTER, json);
 */
         //LinearLayout mHolder = (LinearLayout) v.findViewById(R.id.main_information_holder);
-        ImageView mHolder =(ImageView)v.findViewById((R.id.character_image));
+        ImageView mHolder =(ImageView)v.findViewById((R.id.avatar));
         Pair<View, String> holderPair = Pair.create((View) mHolder, "t_item_character");
         Pair<View, String> navPair=null;
         Pair<View, String> statusPair=null;

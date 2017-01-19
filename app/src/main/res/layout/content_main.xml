@@ -23,7 +23,7 @@
         android:drawableRight="@android:drawable/ic_menu_search"
         android:ems="10"
         android:hint="@string/escribe_el_nombre"
-        android:inputType="textPersonName" />
+        android:inputType="textCapWords|textPersonName" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_item"
