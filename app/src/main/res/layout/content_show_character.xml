@@ -29,21 +29,45 @@
                 android:id="@+id/llEditTextHolder"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:orientation="vertical"
                 android:background="#95000000">
 
                 <TextView
                     android:id="@+id/txtInfoFav"
                     style="@style/Widget.AppCompat.Button.Borderless"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="20dp"
+                    android:layout_gravity="start"
                     android:layout_marginRight="20dp"
                     android:text="Añadir a favoritos"
-                    android:textAlignment="center"
+                    android:textAlignment="viewStart"
                     android:textAllCaps="false"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="18sp" />
+                    android:textColor="@color/colorWhite"
+                    android:textSize="17sp" />
+                <TextView
+                    android:id="@+id/txtDelete"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginRight="20dp"
+                    android:text="Eliminar de  favoritos"
+                    android:textAlignment="viewStart"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="17sp" />
+                <TextView
+                    android:id="@+id/txtOther"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginRight="20dp"
+                    android:text="Otras Opciones..."
+                    android:textAlignment="viewStart"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="17sp" />
 
             </LinearLayout>
 
@@ -55,8 +79,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/header"
-            android:layout_marginLeft="10dp"
-            android:orientation="vertical">
+            android:padding="10dp"
+            android:orientation="vertical"
+            android:elevation="1dp">
 
             <TextView
                 android:id="@+id/name"

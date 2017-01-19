@@ -39,6 +39,7 @@ public class ShowCharacter extends BaseActivity {
     private static final String EXTRA_CHARACTER = "character";
     private Characters mCharacter;
 
+    //region Binds
     @Bind(R.id.main_information_holder)
     RelativeLayout mHolder;
     @Bind(R.id.avatar)
@@ -64,6 +65,8 @@ public class ShowCharacter extends BaseActivity {
     @Bind((R.id.llEditTextHolder))
     LinearLayout llTextHolder;
     private SectionsPagerAdapter mSectionsPagerAdapter;
+
+    //endregion
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -165,9 +168,14 @@ public class ShowCharacter extends BaseActivity {
 
     private void StartBtnAnimation(View view) {
         int cx = llTextHolder.getRight();
-        int cy = llTextHolder.getBottom();
-        int finalRadius = Math.max(llTextHolder.getWidth(), llTextHolder.getHeight());
+        int cy = llTextHolder.getBottom()+32;
+
+        //int cx = (llTextHolder.getLeft() + llTextHolder.getRight()) / 2;
+        //int cy = (llTextHolder.getTop() + llTextHolder.getBottom()) / 2;
+
+        int finalRadius = Math.max(llTextHolder.getWidth(), llTextHolder.getHeight()+llTextHolder.getWidth());
         Animator anim = ViewAnimationUtils.createCircularReveal(llTextHolder, cx, cy, 0, finalRadius);
+        anim.setDuration(800);
         llTextHolder.setVisibility(View.VISIBLE);
         anim.start();
     }
@@ -220,13 +228,13 @@ public class ShowCharacter extends BaseActivity {
                     fragment = comicFragment;
                     break;
                 case 1:
-                    /*
-                    EventsFragment eventsFragment = EventsFragment.newInstance(mCharacter.getId());
+                    // /*
+                    EventFragment eventsFragment = EventFragment.newInstance(mCharacter.getId());
                     EventPresenterImpl mEventPresenter = new EventPresenterImpl();
                     mEventPresenter.attach(ShowCharacter.this, eventsFragment);
                     fragment = eventsFragment;
-                    */
-                    fragment = new ExampleFragment();
+                    //  */
+                    //fragment = new ExampleFragment();
                     break;
             }
             return fragment;
@@ -244,7 +252,6 @@ public class ShowCharacter extends BaseActivity {
             return "";
         }
     }
-
 
     //TODO delete
     public static class ExampleFragment extends Fragment {
