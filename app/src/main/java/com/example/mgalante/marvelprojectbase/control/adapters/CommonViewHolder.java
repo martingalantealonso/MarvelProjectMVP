@@ -1,4 +1,4 @@
-package com.example.mgalante.marvelprojectbase.control.adapters.adapters;
+package com.example.mgalante.marvelprojectbase.control.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -27,9 +27,9 @@ public class CommonViewHolder<T> extends RecyclerView.ViewHolder {
         super(itemView);
         mView = itemView;
         mHolder=(LinearLayout)itemView.findViewById(R.id.main_information_holder);
-        subname = (TextView) itemView.findViewById(R.id.character_desc);
-        name = (TextView) itemView.findViewById(R.id.character_name);
-        avatar = (ImageView) itemView.findViewById(R.id.character_image);
+        subname = (TextView) itemView.findViewById(R.id.subname);
+        name = (TextView) itemView.findViewById(R.id.name);
+        avatar = (ImageView) itemView.findViewById(R.id.avatar);
     }
 
     @Override

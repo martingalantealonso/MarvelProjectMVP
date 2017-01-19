@@ -1,4 +1,4 @@
-package com.example.mgalante.marvelprojectbase.control.adapters.callbacks;
+package com.example.mgalante.marvelprojectbase.control.callbacks;
 
 import android.view.View;
 

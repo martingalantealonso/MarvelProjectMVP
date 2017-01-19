@@ -9,8 +9,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
@@ -39,7 +41,7 @@ public class ShowCharacter extends BaseActivity {
 
     @Bind(R.id.main_information_holder)
     RelativeLayout mHolder;
-    @Bind(R.id.character_image)
+    @Bind(R.id.avatar)
     ImageView mAvatar;
     @Bind(R.id.name)
     TextView mName;
@@ -90,7 +92,6 @@ public class ShowCharacter extends BaseActivity {
             }
         });
 
-        windowTransition();
 
         mComicLink.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,6 +119,7 @@ public class ShowCharacter extends BaseActivity {
 
         fillTabs();
 
+        windowTransition();
     }
 
     private void fillTabs() {
@@ -131,10 +133,10 @@ public class ShowCharacter extends BaseActivity {
             int iconId = -1;
             switch (i) {
                 case 0:
-                    title = mCharacter.getComics().getAvailable() + " " +  getString(R.string.comics);
+                    title = mCharacter.getComics().getAvailable() + " " + getString(R.string.comics);
                     break;
                 case 1:
-                    title =  mCharacter.getEvents().getAvailable() + " " +  getString(R.string.events);
+                    title = mCharacter.getEvents().getAvailable() + " " + getString(R.string.events);
                     break;
 
             }
@@ -145,7 +147,7 @@ public class ShowCharacter extends BaseActivity {
     }
 
     private void openUrl(List<Url> urls, String type) {
-        for (Url url:urls
+        for (Url url : urls
                 ) {
             if (url.getType().equals(type)) {
                 Intent i = new Intent(Intent.ACTION_VIEW);
@@ -157,14 +159,14 @@ public class ShowCharacter extends BaseActivity {
 
     private void windowTransition() {
         AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
-        alphaAnimation.setDuration(2000);
+        alphaAnimation.setDuration(1000);
         mFloatingButton.startAnimation(alphaAnimation);
-            }
+    }
 
     private void StartBtnAnimation(View view) {
-        int cx = llTextHolder.getRight() - 30;
-        int cy = llTextHolder.getBottom() - 60;
-        int finalRadius = Math.max(view.getWidth(), llTextHolder.getHeight());
+        int cx = llTextHolder.getRight();
+        int cy = llTextHolder.getBottom();
+        int finalRadius = Math.max(llTextHolder.getWidth(), llTextHolder.getHeight());
         Animator anim = ViewAnimationUtils.createCircularReveal(llTextHolder, cx, cy, 0, finalRadius);
         llTextHolder.setVisibility(View.VISIBLE);
         anim.start();
@@ -199,31 +201,59 @@ public class ShowCharacter extends BaseActivity {
         });
     }
 
-    private class SectionsPagerAdapter extends FragmentPagerAdapter{
+    private class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager supportFragmentManager) {
-            super(supportFragmentManager);
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
         }
 
+        //Esto se hace tantas veces como retorne el método getCount. Dependiendo de la posicion que le llegue al switch, llenará cada Tab con un fragment u otro
         @Override
         public Fragment getItem(int position) {
-            Fragment fragment =null;
+            Fragment fragment = null;
             switch (position) {
                 case 0:
-
-                    fragment=new Fragment();
+                    //Se llena la tab de índice 0 con el Fragment que contiene los Comics
+                    ComicFragment comicFragment = ComicFragment.newInstance(mCharacter.getId());
+                    ComicPresenter comicPresenter = new ComicPresenter();
+                    comicPresenter.attach(ShowCharacter.this, comicFragment);
+                    fragment = comicFragment;
                     break;
                 case 1:
-                    fragment=new Fragment();
+                    /*
+                    EventsFragment eventsFragment = EventsFragment.newInstance(mCharacter.getId());
+                    EventPresenterImpl mEventPresenter = new EventPresenterImpl();
+                    mEventPresenter.attach(ShowCharacter.this, eventsFragment);
+                    fragment = eventsFragment;
+                    */
+                    fragment = new ExampleFragment();
                     break;
             }
-            return  fragment;
+            return fragment;
         }
 
 
+        //Con este método se crearán N numero de Tabs
         @Override
         public int getCount() {
             return 2;
         }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return "";
+        }
     }
+
+
+    //TODO delete
+    public static class ExampleFragment extends Fragment {
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            // Inflate the layout for this fragment
+            return inflater.inflate(R.layout.fragment_example, container, false);
+        }
+    }
+
 }
