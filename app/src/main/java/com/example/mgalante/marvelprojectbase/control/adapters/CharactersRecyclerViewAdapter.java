@@ -1,4 +1,4 @@
-package com.example.mgalante.marvelprojectbase.control.adapters.adapters;
+package com.example.mgalante.marvelprojectbase.control.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -9,7 +9,8 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.example.mgalante.marvelprojectbase.R;
 import com.example.mgalante.marvelprojectbase.api.entities.Characters;
-import com.example.mgalante.marvelprojectbase.control.adapters.callbacks.CharacterListCallBack;
+import com.example.mgalante.marvelprojectbase.control.callbacks.CharacterListCallBack;
+
 
 import java.util.List;
 

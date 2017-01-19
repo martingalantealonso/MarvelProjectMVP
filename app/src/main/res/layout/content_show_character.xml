@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- HEADER -->
+    <RelativeLayout
+        android:id="@+id/main_information_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Header   IMG -->
+        <FrameLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/avatar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="220dp"
+                android:scaleType="fitXY"
+                android:transitionName="t_item_character" />
+
+            <LinearLayout
+                android:id="@+id/llEditTextHolder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="#95000000">
+
+                <TextView
+                    android:id="@+id/txtInfoFav"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginRight="20dp"
+                    android:text="Añadir a favoritos"
+                    android:textAlignment="viewStart"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="17sp" />
+                <TextView
+                    android:id="@+id/txtDelete"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginRight="20dp"
+                    android:text="Eliminar de  favoritos"
+                    android:textAlignment="viewStart"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="17sp" />
+                <TextView
+                    android:id="@+id/txtOther"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginRight="20dp"
+                    android:text="Otras Opciones..."
+                    android:textAlignment="viewStart"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="17sp" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <!--BODY      Name & Description -->
+        <LinearLayout
+            android:id="@+id/doby"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/header"
+            android:padding="10dp"
+            android:orientation="vertical"
+            android:elevation="1dp">
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/subname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btn_add"
+            android:layout_width="@dimen/floating_button_size"
+            android:layout_height="@dimen/floating_button_size"
+            android:layout_alignBottom="@id/header"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="-32dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/btn_background"
+            android:contentDescription="@null"
+            android:elevation="@dimen/button_elevation" />
+
+
+    </RelativeLayout>
+
+    <!-- BODY -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:minHeight="300dp"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:background="@color/colorFab">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/links"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/detail"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:elevation="2dp"
+                android:text="@string/detalle"
+                android:textColor="@color/colorPrimaryDark" />
+
+            <Button
+                android:id="@+id/wiki"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/wiki"
+                android:textColor="@color/colorPrimaryDark" />
+
+
+            <Button
+                android:id="@+id/comiclink"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/comiclink"
+                android:textColor="@color/colorPrimaryDark" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/recursos"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tablayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+           />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:minHeight="300dp"
+            android:background="@color/colorAccent"
+            />
+    </LinearLayout>
+
+</LinearLayout>
