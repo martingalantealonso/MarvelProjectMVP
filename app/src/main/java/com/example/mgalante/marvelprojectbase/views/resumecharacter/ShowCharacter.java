@@ -129,7 +129,7 @@ public class ShowCharacter extends BaseActivity {
 
         fillTabs();
 
-        windowTransition();
+       windowTransition();
     }
 
     private void fillTabs() {
@@ -214,8 +214,8 @@ public class ShowCharacter extends BaseActivity {
         return R.layout.activity_show_character;
     }
 
-    @Override
-    public void onBackPressed() {
+   @Override
+   public void onBackPressed() {
         AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
         alphaAnimation.setDuration(100);
         mFloatingButton.startAnimation(alphaAnimation);
