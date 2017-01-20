@@ -3,6 +3,7 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="floating_button_size">60dp</dimen>
+    <dimen name="fav_button_size">45dp</dimen>
     <dimen name="button_elevation">5dp</dimen>
     <dimen name="button_press_elevation">18dp</dimen>
 </resources>

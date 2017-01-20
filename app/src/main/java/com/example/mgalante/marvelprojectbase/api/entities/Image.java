@@ -3,6 +3,7 @@ package com.example.mgalante.marvelprojectbase.api.entities;
 
 public class Image {
 
+
     private String path;
     private String extension;
 

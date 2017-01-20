@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MarvelProjectBase</string>
+    <string name="app_name">MarvelProjectBase2</string>
     <string name="escribe_el_nombre">Escribe el nombre...</string>
     <string name="busca_tu_superh_roe">Busca tu superhéroe</string>
     <string name="sin_resultados">Sin resultados</string>
@@ -12,6 +12,8 @@
     <string name="comics">Comics</string>
     <string name="events">Events</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="delete_from_favs">Eliminar de favoritos</string>
+    <string name="txt_add_fav">Añadir a favoritos</string>
+
 </resources>
