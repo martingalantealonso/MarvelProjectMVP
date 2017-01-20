@@ -1,6 +1,7 @@
 package com.example.mgalante.marvelprojectbase.views.resumecharacter;
 
 import android.animation.Animator;
+
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.graphics.drawable.Animatable;
@@ -33,11 +34,14 @@ import com.example.mgalante.marvelprojectbase.R;
 import com.example.mgalante.marvelprojectbase.api.entities.Characters;
 import com.example.mgalante.marvelprojectbase.api.entities.Url;
 import com.example.mgalante.marvelprojectbase.ormlite.DBHelper;
+
 import com.example.mgalante.marvelprojectbase.views.BaseActivity;
 import com.google.gson.Gson;
 import com.j256.ormlite.dao.Dao;
 
 import java.sql.SQLException;
+import java.util.List;
+
 import java.util.List;
 
 import butterknife.Bind;
@@ -108,6 +112,7 @@ public class ShowCharacter extends BaseActivity {
 
         //mFloatingButton.setImageResource(R.drawable.ic_favorite_border_black_24dp);
         mFloatingButton.setImageResource(R.drawable.icn_morp);
+
         mFloatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,6 +136,7 @@ public class ShowCharacter extends BaseActivity {
             @Override
             public void onClick(View view) {
                 openUrl(mCharacter.getUrls(), "comiclink");
+
             }
         });
         mDetail.setOnClickListener(new View.OnClickListener() {
@@ -239,6 +245,7 @@ public class ShowCharacter extends BaseActivity {
         }
 
 
+
     }
 
     private void openUrl(List<Url> urls, String type) {
@@ -265,10 +272,12 @@ public class ShowCharacter extends BaseActivity {
         fade.excludeTarget(android.R.id.navigationBarBackground, true);
         fade.excludeTarget(android.R.id.statusBarBackground, true);
         return fade;
+
     }
 
     private void StartBtnAnimation(View view) {
         int cx = llTextHolder.getRight();
+
         int cy = llTextHolder.getBottom() + 32;
         //int cx = (llTextHolder.getLeft() + llTextHolder.getRight()) / 2;
         //int cy = (llTextHolder.getTop() + llTextHolder.getBottom()) / 2;
@@ -301,6 +310,7 @@ public class ShowCharacter extends BaseActivity {
             mAnimatable = (Animatable) (mFloatingButton).getDrawable();
             mAnimatable.start();
         }
+
     }
 
     @Override
@@ -315,6 +325,7 @@ public class ShowCharacter extends BaseActivity {
         if (mFavButton.getVisibility() == View.VISIBLE) mFavButton.startAnimation(alphaAnimation);
         mFloatingButton.startAnimation(alphaAnimation);
 
+
         alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -324,7 +335,9 @@ public class ShowCharacter extends BaseActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 mFloatingButton.setVisibility(View.GONE);
+
                 mFavButton.setVisibility(View.GONE);
+
                 finishAfterTransition();
             }
 
@@ -361,6 +374,7 @@ public class ShowCharacter extends BaseActivity {
                     fragment = eventsFragment;
                       */
                     fragment = new ExampleFragment();
+
                     break;
             }
             return fragment;
