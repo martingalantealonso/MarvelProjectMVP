@@ -39,6 +39,8 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
     EditText mEdTHeroName;
     @Bind(R.id.list_item)
     RecyclerView mListItem;
+    @Bind(R.id.main_image)
+    ImageView mMainImageView;
 
     private MainPresenterImpl presenter;
     private List<Characters> characters;
@@ -50,6 +52,8 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this, this);
+        //mMainImageView.setImageResource(R.drawable.marvellogo);
+
         //Hide the keyboard
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
