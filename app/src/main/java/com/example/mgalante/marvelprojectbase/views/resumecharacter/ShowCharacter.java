@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,6 +14,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.transition.Fade;
 import android.transition.Transition;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -30,9 +32,12 @@ import com.bumptech.glide.Glide;
 import com.example.mgalante.marvelprojectbase.R;
 import com.example.mgalante.marvelprojectbase.api.entities.Characters;
 import com.example.mgalante.marvelprojectbase.api.entities.Url;
+import com.example.mgalante.marvelprojectbase.ormlite.DBHelper;
 import com.example.mgalante.marvelprojectbase.views.BaseActivity;
 import com.google.gson.Gson;
+import com.j256.ormlite.dao.Dao;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import butterknife.Bind;
@@ -41,13 +46,18 @@ import butterknife.ButterKnife;
 public class ShowCharacter extends BaseActivity {
 
     private static final String EXTRA_CHARACTER = "character";
+    private static final String TAG = "Marvel_ShowCharacter";
     private Characters mCharacter;
     private boolean isEditTextVisible;
+    private boolean isFavHero;
     private Animatable mAnimatable;
+    private DBHelper mDBHelper;
 
     //region Binds
     @Bind(R.id.main_information_holder)
     RelativeLayout mHolder;
+    @Bind(R.id.txtInfoFav)
+    TextView mFavTextView;
     @Bind(R.id.avatar)
     ImageView mAvatar;
     @Bind(R.id.name)
@@ -66,8 +76,8 @@ public class ShowCharacter extends BaseActivity {
     ViewPager mViewPager;
     @Bind(R.id.btn_add)
     ImageButton mFloatingButton;
-    @Bind(R.id.txtInfoFav)
-    TextView mTxtInfoFav;
+    @Bind(R.id.btn_fav)
+    ImageButton mFavButton;
     @Bind((R.id.llEditTextHolder))
     LinearLayout llTextHolder;
     private SectionsPagerAdapter mSectionsPagerAdapter;
@@ -94,6 +104,7 @@ public class ShowCharacter extends BaseActivity {
         mDescription.setText(mCharacter.getDescription());
 
         llTextHolder.setVisibility(View.INVISIBLE);
+        //mFavButton.setVisibility(View.INVISIBLE);
 
         //mFloatingButton.setImageResource(R.drawable.ic_favorite_border_black_24dp);
         mFloatingButton.setImageResource(R.drawable.icn_morp);
@@ -104,21 +115,30 @@ public class ShowCharacter extends BaseActivity {
             }
         });
 
-
+        mFavTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveFavorite();
+            }
+        });
+        mFavButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveFavorite();
+            }
+        });
         mComicLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 openUrl(mCharacter.getUrls(), "comiclink");
             }
         });
-
         mDetail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 openUrl(mCharacter.getUrls(), "detail");
             }
         });
-
         mWiki.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -131,7 +151,70 @@ public class ShowCharacter extends BaseActivity {
 
         fillTabs();
 
-        windowTransition();
+        loadFav();
+        showAnimImageButton(mFloatingButton);
+    }
+
+    private void loadFav() {
+        mDBHelper = DBHelper.getHelper(this);
+        try {
+            Dao dao = mDBHelper.getCharacterDao();
+            //Se encuentra que el heroe ha sido guardado
+            if (dao.queryForId(mCharacter.getId()) != null) {
+                //mostrar boton
+                //mFavButton.setVisibility(View.VISIBLE);
+                mFavButton.setImageResource(R.drawable.ic_favorite_black_24dp);
+                mFavTextView.setText(R.string.delete_from_favs);
+                isFavHero = true;
+                Log.i(TAG, "Heroe " + mCharacter.getName() + " encontrado");
+            } else {
+
+            }
+
+        } catch (SQLException e) {
+            Log.e("AddActivity", e.toString());
+            e.printStackTrace();
+        }
+    }
+
+    private void saveFavorite() {
+        mDBHelper = DBHelper.getHelper(this);
+        Dao dao;
+        try {
+            dao = mDBHelper.getCharacterDao();
+            Characters character = new Characters(mCharacter.getId(), mCharacter.getName(), mCharacter.getDescription(), mCharacter.getResourceURI());
+            if (!isFavHero) {
+                //Si no es fav, se guarda
+                dao.create(character);
+                setResult(RESULT_OK);
+                mDBHelper.close();
+                mFavTextView.setText(R.string.delete_from_favs);
+                mFavButton.setImageResource(R.drawable.ic_favorite_black_24dp);
+                showAnimImageButton(mFavButton);
+                Log.i(TAG, "Heroe " + mCharacter.getName() + " creado");
+                isFavHero = true;
+                Snackbar.make(findViewById(android.R.id.content), "Heroe guardado", Snackbar.LENGTH_LONG)
+                        //.setActionTextColor(Color.CYAN)
+                        .setAction("Deshacer", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Log.i("Snackbar", "Pulsada acción snackbar!");
+                            }
+                        })
+                        .show();
+            } else {
+                //Si ya es fav, se elimina
+                dao.delete(character);
+                setResult(RESULT_OK);
+                mFavTextView.setText(R.string.txt_add_fav);
+                mFavButton.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+                showAnimImageButton(mFavButton);
+                Log.i(TAG, "Heroe " + mCharacter.getName() + " eliminado");
+                isFavHero = false;
+            }
+        } catch (SQLException e) {
+            Log.e(TAG, "Error adding the Hero");
+        }
     }
 
     private void fillTabs() {
@@ -169,12 +252,12 @@ public class ShowCharacter extends BaseActivity {
         }
     }
 
-    private void windowTransition() {
+    private void showAnimImageButton(ImageButton btn) {
         getWindow().setEnterTransition(makeEnterTransition());
         AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
         alphaAnimation.setDuration(1000);
-        mFloatingButton.startAnimation(alphaAnimation);
-
+        btn.startAnimation(alphaAnimation);
+        btn.setVisibility(View.VISIBLE);
     }
 
     public static Transition makeEnterTransition() {
@@ -229,7 +312,9 @@ public class ShowCharacter extends BaseActivity {
     public void onBackPressed() {
         AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
         alphaAnimation.setDuration(100);
+        if (mFavButton.getVisibility() == View.VISIBLE) mFavButton.startAnimation(alphaAnimation);
         mFloatingButton.startAnimation(alphaAnimation);
+
         alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -239,6 +324,7 @@ public class ShowCharacter extends BaseActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 mFloatingButton.setVisibility(View.GONE);
+                mFavButton.setVisibility(View.GONE);
                 finishAfterTransition();
             }
 

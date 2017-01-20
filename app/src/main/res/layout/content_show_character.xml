@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -33,6 +34,19 @@
                     android:scaleType="fitXY"
                     android:transitionName="t_item_character" />
 
+                <ImageButton
+                    android:id="@+id/btn_fav"
+                    android:layout_width="@dimen/fav_button_size"
+                    android:layout_height="@dimen/fav_button_size"
+                    android:layout_gravity="top|right"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="26dp"
+                    android:background="@drawable/btn_fav_background"
+                    android:contentDescription="@null"
+                    android:elevation="@dimen/button_elevation"
+                    android:src="@drawable/ic_favorite_border_black_24dp"
+                    />
+
                 <LinearLayout
                     android:id="@+id/llEditTextHolder"
                     android:layout_width="match_parent"
@@ -46,7 +60,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
-                        android:text="Añadir a favoritos"
+                        android:text="@string/txt_add_fav"
                         android:textAlignment="viewStart"
                         android:textAllCaps="false"
                         android:textColor="@color/colorWhite"
@@ -62,7 +76,8 @@
                         android:textAlignment="viewStart"
                         android:textAllCaps="false"
                         android:textColor="@color/colorWhite"
-                        android:textSize="17sp" />
+                        android:textSize="17sp"
+                        android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/txtOther"
