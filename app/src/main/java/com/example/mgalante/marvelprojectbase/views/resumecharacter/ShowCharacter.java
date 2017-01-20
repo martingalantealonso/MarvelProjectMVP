@@ -11,6 +11,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.transition.Fade;
+import android.transition.Transition;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -129,7 +131,7 @@ public class ShowCharacter extends BaseActivity {
 
         fillTabs();
 
-       windowTransition();
+        windowTransition();
     }
 
     private void fillTabs() {
@@ -168,9 +170,18 @@ public class ShowCharacter extends BaseActivity {
     }
 
     private void windowTransition() {
+        getWindow().setEnterTransition(makeEnterTransition());
         AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
         alphaAnimation.setDuration(1000);
         mFloatingButton.startAnimation(alphaAnimation);
+
+    }
+
+    public static Transition makeEnterTransition() {
+        Transition fade = new Fade();
+        fade.excludeTarget(android.R.id.navigationBarBackground, true);
+        fade.excludeTarget(android.R.id.statusBarBackground, true);
+        return fade;
     }
 
     private void StartBtnAnimation(View view) {
@@ -190,7 +201,7 @@ public class ShowCharacter extends BaseActivity {
             mFloatingButton.setImageResource(R.drawable.icn_morp);
             mAnimatable = (Animatable) mFloatingButton.getDrawable();
             mAnimatable.start();
-        }else{
+        } else {
             int initialRadius = llTextHolder.getWidth();
             Animator anim = ViewAnimationUtils.createCircularReveal(llTextHolder, cx, cy, initialRadius, 0);
             anim.addListener(new AnimatorListenerAdapter() {
@@ -214,8 +225,8 @@ public class ShowCharacter extends BaseActivity {
         return R.layout.activity_show_character;
     }
 
-   @Override
-   public void onBackPressed() {
+    @Override
+    public void onBackPressed() {
         AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
         alphaAnimation.setDuration(100);
         mFloatingButton.startAnimation(alphaAnimation);
@@ -257,13 +268,13 @@ public class ShowCharacter extends BaseActivity {
                     fragment = comicFragment;
                     break;
                 case 1:
-                    // /*
+                    /*
                     EventFragment eventsFragment = EventFragment.newInstance(mCharacter.getId());
                     EventPresenterImpl mEventPresenter = new EventPresenterImpl();
                     mEventPresenter.attach(ShowCharacter.this, eventsFragment);
                     fragment = eventsFragment;
-                    //  */
-                    //fragment = new ExampleFragment();
+                      */
+                    fragment = new ExampleFragment();
                     break;
             }
             return fragment;
