@@ -17,3 +17,4 @@
         tools:listitem="@layout/fragment_resource" />
 
 </android.support.v4.widget.NestedScrollView>
+
