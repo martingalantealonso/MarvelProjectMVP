@@ -31,11 +31,13 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.mgalante.marvelprojectbase.R;
 import com.example.mgalante.marvelprojectbase.api.entities.Characters;
+import com.example.mgalante.marvelprojectbase.api.entities.Comic;
 import com.example.mgalante.marvelprojectbase.api.entities.Url;
 import com.example.mgalante.marvelprojectbase.ormlite.DBHelper;
 import com.example.mgalante.marvelprojectbase.views.BaseActivity;
 import com.google.gson.Gson;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.QueryBuilder;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -53,6 +55,7 @@ public class ShowCharacter extends BaseActivity {
     private boolean isFavHero;
     private Animatable mAnimatable;
     private DBHelper mDBHelper;
+    private List<Comic> mComics;
 
     //region Binds
     @Bind(R.id.main_information_holder)
@@ -98,7 +101,12 @@ public class ShowCharacter extends BaseActivity {
         String json = getIntent().getExtras().getString(EXTRA_CHARACTER);
         mCharacter = gson.fromJson(json, Characters.class);
         setTitle(mCharacter.getName());
-        String urlImage = mCharacter.getThumbnail().getPath() + "." + mCharacter.getThumbnail().getExtension();
+        String urlImage = null;
+        if (mCharacter.getThumbnail() != null) {
+            urlImage = mCharacter.getThumbnail().getPath() + "." + mCharacter.getThumbnail().getExtension();
+        } else {
+            urlImage = mCharacter.getImageUrl();
+        }
         Glide.with(this).load(urlImage).into(mAvatar);
 
         mName.setText(mCharacter.getName());
@@ -190,7 +198,7 @@ public class ShowCharacter extends BaseActivity {
 
         try {
             characterDao = mDBHelper.getCharacterDao();
-            Characters character = new Characters(mCharacter.getId(), mCharacter.getName(), mCharacter.getDescription(), mCharacter.getResourceURI());
+            Characters character = new Characters(mCharacter.getId(), mCharacter.getName(), mCharacter.getDescription(), mCharacter.getResourceURI(), mCharacter.getThumbnail().getPath() + "." + mCharacter.getThumbnail().getExtension());
 
             if (!isFavHero) {
                 //Si no es fav, se guarda
@@ -247,18 +255,35 @@ public class ShowCharacter extends BaseActivity {
 
         String title = "";
 
-        for (int i = 0; i < mTablayout.getTabCount(); i++) {
-            int iconId = -1;
-            switch (i) {
-                case 0:
-                    title = mCharacter.getComics().getAvailable() + " " + getString(R.string.comics);
-                    break;
-                case 1:
-                    title = mCharacter.getEvents().getAvailable() + " " + getString(R.string.events);
-                    break;
-
+        if (mCharacter.getComics() == null) {
+            mDBHelper = DBHelper.getHelper(this);
+            String letters = "";
+            try {
+                Dao dao = mDBHelper.getComicsDao();
+                QueryBuilder<Comic, Integer> qb = dao.queryBuilder();
+                qb.where().eq("character_id", mCharacter.getId());
+                mComics = qb.query();
+                Log.i("HEY", "HEY");
+                //mCharacter.setComics(qb.query());
+            } catch (SQLException e) {
+                Log.e("AddActivity", e.toString());
+                e.printStackTrace();
             }
-            mTablayout.getTabAt(i).setText(title);
+            //
+        } else {
+            for (int i = 0; i < mTablayout.getTabCount(); i++) {
+                int iconId = -1;
+                switch (i) {
+                    case 0:
+                        title = mCharacter.getComics().getAvailable() + " " + getString(R.string.comics);
+                        break;
+                    case 1:
+                        title = mCharacter.getEvents().getAvailable() + " " + getString(R.string.events);
+                        break;
+
+                }
+                mTablayout.getTabAt(i).setText(title);
+            }
         }
 
 
@@ -404,7 +429,6 @@ public class ShowCharacter extends BaseActivity {
             return "";
         }
     }
-
 
     //TODO delete
     public static class ExampleFragment extends Fragment {

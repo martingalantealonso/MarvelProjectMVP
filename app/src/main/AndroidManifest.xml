@@ -28,6 +28,16 @@
             </intent-filter>
         </activity>
         <activity android:name=".views.resumecharacter.ShowCharacter"></activity>
+        <receiver android:name=".views.main.MainActivity$NetworkStateReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     </application>
+
+
+
+
 
 </manifest>
