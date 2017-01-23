@@ -13,7 +13,7 @@ import java.util.List;
 @DatabaseTable
 public class Characters {
 
-    @DatabaseField(columnName = "id",id = true)
+    @DatabaseField(columnName = "idCharacter",id = true)
     private int id;// (int, optional): The unique ID of the character resource.,
     @DatabaseField(columnName = "name")
     private String name; // (string, optional): The name of the character.,

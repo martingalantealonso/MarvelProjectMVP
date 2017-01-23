@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.mgalante.marvelprojectbase.api.entities.Characters;
+import com.example.mgalante.marvelprojectbase.api.entities.Comic;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
@@ -16,13 +17,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by mgalante on 20/01/17.
  */
 
-public class DBHelper extends OrmLiteSqliteOpenHelper{
+public class DBHelper extends OrmLiteSqliteOpenHelper {
 
-    private static final String DATABASE_NAME="characters.db";
-    private static final int DATABASE_VERSION=1;
-    private static DBHelper helper=null;
+    private static final String DATABASE_NAME = "characters.db";
+    private static final int DATABASE_VERSION = 1;
+    private static DBHelper helper = null;
     private static final AtomicInteger usageCounter = new AtomicInteger(0);
-    private Dao<Characters,Integer> characterDao;
+    private Dao<Characters, Integer> characterDao;
+    private Dao<Comic, Integer> comicDao;
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -40,8 +42,9 @@ public class DBHelper extends OrmLiteSqliteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
-        try{
-            TableUtils.createTableIfNotExists(connectionSource,Characters.class);
+        try {
+            TableUtils.createTableIfNotExists(connectionSource, Characters.class);
+            TableUtils.createTableIfNotExists(connectionSource,Comic.class);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -57,6 +60,13 @@ public class DBHelper extends OrmLiteSqliteOpenHelper{
             characterDao = getDao(Characters.class);
         }
         return characterDao;
+    }
+
+    public Dao<Comic, Integer> getComicsDao() throws SQLException {
+        if (comicDao == null) {
+            comicDao = getDao(Comic.class);
+        }
+        return comicDao;
     }
 
     @Override

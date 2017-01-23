@@ -1,14 +1,19 @@
 package com.example.mgalante.marvelprojectbase.api.entities;
+import com.j256.ormlite.field.DatabaseField;
+
 import java.util.Date;
 
 
 public class Comic {
 
+    @DatabaseField(columnName = "idComic",id=true)
     private int id;
     private int digitalId;
+    @DatabaseField(columnName = "title")
     private String title;
     private double issueNumber;
     private String variantDescription;
+    @DatabaseField(columnName = "description")
     private String description;
     private Date modified;
     private String isbn;
@@ -19,6 +24,18 @@ public class Comic {
     private String format;
     private int pageCount;
     private Image thumbnail;
+    @DatabaseField(canBeNull = false, foreign = true)
+    public Characters character;
+
+    public Comic() {
+    }
+
+    public Comic(int id, String title, String description, Characters character) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.character = character;
+    }
 
     public int getId() {
         return id;
