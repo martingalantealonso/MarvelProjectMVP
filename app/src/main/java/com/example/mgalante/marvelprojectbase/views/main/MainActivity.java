@@ -6,11 +6,14 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -50,6 +53,13 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
     RecyclerView mListItem;
     @Bind(R.id.main_image)
     ImageView mMainImageView;
+    @Bind(R.id.toolbar)
+    Toolbar mToolBar;
+    @Bind(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout mCollapsingToolbarLayout;
+    @Bind(R.id.app_bar_layout)
+    AppBarLayout mAppBarLayout;
+
 
     private MainPresenterImpl presenter;
     private List<Characters> characters;
@@ -66,6 +76,29 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
 
         //Hide the keyboard
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+        //setTitle(R.string.busca_tu_superh_roe);
+        setSupportActionBar(mToolBar);
+        mCollapsingToolbarLayout.setTitle(" ");
+
+        mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isShow = false;
+            int scrollRange = -1;
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    mCollapsingToolbarLayout.setTitle("Marvel Heroes");
+                    isShow = true;
+                } else if(isShow) {
+                    mCollapsingToolbarLayout.setTitle(" ");
+                    isShow = false;
+                }
+            }
+        });
 
         if (presenter == null) {
             presenter = new MainPresenterImpl(new ServiceMarvel());
