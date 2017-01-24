@@ -1,7 +1,6 @@
 package com.example.mgalante.marvelprojectbase.views.resumecharacter;
 
 import android.animation.Animator;
-
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.graphics.drawable.Animatable;
@@ -32,16 +31,15 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.mgalante.marvelprojectbase.R;
 import com.example.mgalante.marvelprojectbase.api.entities.Characters;
+import com.example.mgalante.marvelprojectbase.api.entities.Comic;
 import com.example.mgalante.marvelprojectbase.api.entities.Url;
 import com.example.mgalante.marvelprojectbase.ormlite.DBHelper;
-
 import com.example.mgalante.marvelprojectbase.views.BaseActivity;
 import com.google.gson.Gson;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.QueryBuilder;
 
 import java.sql.SQLException;
-import java.util.List;
-
 import java.util.List;
 
 import butterknife.Bind;
@@ -52,10 +50,12 @@ public class ShowCharacter extends BaseActivity {
     private static final String EXTRA_CHARACTER = "character";
     private static final String TAG = "Marvel_ShowCharacter";
     private Characters mCharacter;
+    private ComicPresenter mComicPresenter;
     private boolean isEditTextVisible;
     private boolean isFavHero;
     private Animatable mAnimatable;
     private DBHelper mDBHelper;
+    private List<Comic> mComics;
 
     //region Binds
     @Bind(R.id.main_information_holder)
@@ -101,7 +101,12 @@ public class ShowCharacter extends BaseActivity {
         String json = getIntent().getExtras().getString(EXTRA_CHARACTER);
         mCharacter = gson.fromJson(json, Characters.class);
         setTitle(mCharacter.getName());
-        String urlImage = mCharacter.getThumbnail().getPath() + "." + mCharacter.getThumbnail().getExtension();
+        String urlImage = null;
+        if (mCharacter.getThumbnail() != null) {
+            urlImage = mCharacter.getThumbnail().getPath() + "." + mCharacter.getThumbnail().getExtension();
+        } else {
+            urlImage = mCharacter.getImageUrl();
+        }
         Glide.with(this).load(urlImage).into(mAvatar);
 
         mName.setText(mCharacter.getName());
@@ -111,8 +116,7 @@ public class ShowCharacter extends BaseActivity {
         //mFavButton.setVisibility(View.INVISIBLE);
 
         //mFloatingButton.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-        mFloatingButton.setImageResource(R.drawable.icn_morp);
-
+        mFloatingButton.setImageResource(R.drawable.icn_morph_reverse);
         mFloatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -159,6 +163,10 @@ public class ShowCharacter extends BaseActivity {
 
         loadFav();
         showAnimImageButton(mFloatingButton);
+
+        if (mComicPresenter == null) {
+            mComicPresenter = new ComicPresenter();
+        }
     }
 
     private void loadFav() {
@@ -185,42 +193,58 @@ public class ShowCharacter extends BaseActivity {
 
     private void saveFavorite() {
         mDBHelper = DBHelper.getHelper(this);
-        Dao dao;
+        Dao characterDao;
+
         try {
-            dao = mDBHelper.getCharacterDao();
-            Characters character = new Characters(mCharacter.getId(), mCharacter.getName(), mCharacter.getDescription(), mCharacter.getResourceURI());
+            characterDao = mDBHelper.getCharacterDao();
+            Characters character = new Characters(mCharacter.getId(), mCharacter.getName(), mCharacter.getDescription(), mCharacter.getResourceURI(), mCharacter.getThumbnail().getPath() + "." + mCharacter.getThumbnail().getExtension());
+
             if (!isFavHero) {
                 //Si no es fav, se guarda
-                dao.create(character);
+                characterDao.create(character);
                 setResult(RESULT_OK);
                 mDBHelper.close();
+                Log.i(TAG, "Lista de comics: " + mCharacter.getComics().getCollectionURI());
+                mComicPresenter.saveComics(mCharacter);
                 mFavTextView.setText(R.string.delete_from_favs);
                 mFavButton.setImageResource(R.drawable.ic_favorite_black_24dp);
                 showAnimImageButton(mFavButton);
                 Log.i(TAG, "Heroe " + mCharacter.getName() + " creado");
                 isFavHero = true;
-                Snackbar.make(findViewById(android.R.id.content), "Heroe guardado", Snackbar.LENGTH_LONG)
-                        //.setActionTextColor(Color.CYAN)
-                        .setAction("Deshacer", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Log.i("Snackbar", "Pulsada acción snackbar!");
-                            }
-                        })
-                        .show();
+                makeSnackbar("Heroe guardado", 0);
             } else {
                 //Si ya es fav, se elimina
-                dao.delete(character);
+                characterDao.delete(character);
                 setResult(RESULT_OK);
                 mFavTextView.setText(R.string.txt_add_fav);
                 mFavButton.setImageResource(R.drawable.ic_favorite_border_black_24dp);
                 showAnimImageButton(mFavButton);
                 Log.i(TAG, "Heroe " + mCharacter.getName() + " eliminado");
                 isFavHero = false;
+                makeSnackbar("Heroe eliminado", 1);
             }
         } catch (SQLException e) {
             Log.e(TAG, "Error adding the Hero");
         }
+    }
+
+    private void makeSnackbar(String s, final Integer code) {
+        Snackbar.make(findViewById(android.R.id.content), s, Snackbar.LENGTH_LONG)
+                //.setActionTextColor(Color.CYAN)
+                .setAction("Deshacer", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        switch (code) {
+                            case 0:
+                                Log.i("Snackbar", "Eliminar Heroe");
+                                break;
+                            case 1:
+                                Log.i("Snackbar", "Guardar Heroe");
+                                break;
+                        }
+                    }
+                })
+                .show();
     }
 
     private void fillTabs() {
@@ -230,20 +254,36 @@ public class ShowCharacter extends BaseActivity {
 
         String title = "";
 
-        for (int i = 0; i < mTablayout.getTabCount(); i++) {
-            int iconId = -1;
-            switch (i) {
-                case 0:
-                    title = mCharacter.getComics().getAvailable() + " " + getString(R.string.comics);
-                    break;
-                case 1:
-                    title = mCharacter.getEvents().getAvailable() + " " + getString(R.string.events);
-                    break;
-
+        if (mCharacter.getComics() == null) {
+            mDBHelper = DBHelper.getHelper(this);
+            String letters = "";
+            try {
+                Dao dao = mDBHelper.getComicsDao();
+                QueryBuilder<Comic, Integer> qb = dao.queryBuilder();
+                qb.where().eq("character_id", mCharacter.getId());
+                mComics = qb.query();
+                Log.i("HEY", "HEY");
+                //mCharacter.setComics(qb.query());
+            } catch (SQLException e) {
+                Log.e("AddActivity", e.toString());
+                e.printStackTrace();
             }
-            mTablayout.getTabAt(i).setText(title);
-        }
+            //
+        } else {
+            for (int i = 0; i < mTablayout.getTabCount(); i++) {
+                int iconId = -1;
+                switch (i) {
+                    case 0:
+                        title = mCharacter.getComics().getAvailable() + " " + getString(R.string.comics);
+                        break;
+                    case 1:
+                        title = mCharacter.getEvents().getAvailable() + " " + getString(R.string.events);
+                        break;
 
+                }
+                mTablayout.getTabAt(i).setText(title);
+            }
+        }
 
 
     }
@@ -281,7 +321,6 @@ public class ShowCharacter extends BaseActivity {
         int cy = llTextHolder.getBottom() + 32;
         //int cx = (llTextHolder.getLeft() + llTextHolder.getRight()) / 2;
         //int cy = (llTextHolder.getTop() + llTextHolder.getBottom()) / 2;
-
         if (!isEditTextVisible) {
             isEditTextVisible = true;
             int finalRadius = Math.max(llTextHolder.getWidth(), llTextHolder.getHeight() + llTextHolder.getWidth());
@@ -289,7 +328,6 @@ public class ShowCharacter extends BaseActivity {
             anim.setDuration(800);
             llTextHolder.setVisibility(View.VISIBLE);
             anim.start();
-
             mFloatingButton.setImageResource(R.drawable.icn_morp);
             mAnimatable = (Animatable) mFloatingButton.getDrawable();
             mAnimatable.start();
@@ -373,13 +411,11 @@ public class ShowCharacter extends BaseActivity {
                     mEventPresenter.attach(ShowCharacter.this, eventsFragment);
                     fragment = eventsFragment;
                       */
-                    fragment = new ExampleFragment();
-
+                    fragment = new Fragment();
                     break;
             }
             return fragment;
         }
-
 
         //Con este método se crearán N numero de Tabs
         @Override

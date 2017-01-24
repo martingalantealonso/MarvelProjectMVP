@@ -13,7 +13,7 @@ import java.util.List;
 @DatabaseTable
 public class Characters {
 
-    @DatabaseField(columnName = "id",id = true)
+    @DatabaseField(columnName = "idCharacter", id = true)
     private int id;// (int, optional): The unique ID of the character resource.,
     @DatabaseField(columnName = "name")
     private String name; // (string, optional): The name of the character.,
@@ -23,7 +23,6 @@ public class Characters {
     @DatabaseField(columnName = "resourceURI")
     private String resourceURI;// (string, optional): The canonical URL identifier for this resource.,
     private List<Url> urls;//(Array[Url], optional): A set of public web site URLs for the resource.,
-    //@DatabaseField(foreign = true,columnName = "thumbnail")
     private Image thumbnail;//(Image, optional): The representative image for this character.,
     //@DatabaseField(foreign = true,columnName = "comics")
     private ResourceList comics;//(ComicList, optional): A resource list containing comics which feature this character.,
@@ -32,15 +31,21 @@ public class Characters {
     private ResourceList events;//(EventList, optional): A resource list of events in which this character appears.,
     private ResourceList series;//(SeriesList, optional): A resource list of series in which this character appears.
 
+    @DatabaseField(columnName = "image")
+    private String imageUrl;
+
+
+
     public Characters() {
 
     }
 
-    public Characters(int id, String name, String description, String resourceURI) {
+    public Characters(int id, String name, String description, String resourceURI, String imageUrl) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.resourceURI = resourceURI;
+        this.imageUrl = imageUrl;
     }
 
     public int getId() {
@@ -129,5 +134,13 @@ public class Characters {
 
     public void setSeries(ResourceList series) {
         this.series = series;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

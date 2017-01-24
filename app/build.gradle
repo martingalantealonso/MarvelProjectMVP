@@ -37,4 +37,7 @@ dependencies {
     compile 'com.j256.ormlite:ormlite-core:5.0'
     compile 'com.j256.ormlite:ormlite-android:5.0'
     testCompile 'junit:junit:4.12'
+
+    compile 'org.greenrobot:eventbus:3.0.0'
+
 }

@@ -1,14 +1,22 @@
 package com.example.mgalante.marvelprojectbase.views.main;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.Window;
@@ -22,10 +30,19 @@ import com.example.mgalante.marvelprojectbase.api.ServiceMarvel;
 import com.example.mgalante.marvelprojectbase.api.entities.Characters;
 import com.example.mgalante.marvelprojectbase.control.adapters.CharactersRecyclerViewAdapter;
 import com.example.mgalante.marvelprojectbase.control.callbacks.CharacterListCallBack;
+import com.example.mgalante.marvelprojectbase.eventbus.NetworkStateChanged;
+import com.example.mgalante.marvelprojectbase.ormlite.DBHelper;
 import com.example.mgalante.marvelprojectbase.views.BaseActivity;
 import com.example.mgalante.marvelprojectbase.views.resumecharacter.ShowCharacter;
 import com.google.gson.Gson;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.QueryBuilder;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,10 +58,18 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
     RecyclerView mListItem;
     @Bind(R.id.main_image)
     ImageView mMainImageView;
+    @Bind(R.id.toolbar)
+    Toolbar mToolBar;
+    @Bind(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout mCollapsingToolbarLayout;
+    @Bind(R.id.app_bar_layout)
+    AppBarLayout mAppBarLayout;
+
 
     private MainPresenterImpl presenter;
     private List<Characters> characters;
     private CharactersRecyclerViewAdapter adapter;
+    private DBHelper mDBHelper;
 
 
     @Override
@@ -56,6 +81,29 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
 
         //Hide the keyboard
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+        //setTitle(R.string.busca_tu_superh_roe);
+        setSupportActionBar(mToolBar);
+        mCollapsingToolbarLayout.setTitle(" ");
+
+        mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isShow = false;
+            int scrollRange = -1;
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    mCollapsingToolbarLayout.setTitle("Marvel Heroes");
+                    isShow = true;
+                } else if (isShow) {
+                    mCollapsingToolbarLayout.setTitle(" ");
+                    isShow = false;
+                }
+            }
+        });
 
         if (presenter == null) {
             presenter = new MainPresenterImpl(new ServiceMarvel());
@@ -78,6 +126,8 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
                 if (trimmedText.length() >= 3) {
                     //Iniciar busqueda de Heroes con ese nombre
                     presenter.getHeroes(trimmedText);
+                } else if (trimmedText.length() <= 2) {
+                    recoverList();
                 }
             }
         });
@@ -87,6 +137,9 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
         adapter = new CharactersRecyclerViewAdapter(characters, this, this);
         mListItem.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         mListItem.setAdapter(adapter);
+
+        //load Saved Heroes
+        recoverList();
 
     }
 
@@ -124,15 +177,15 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
         i.putExtra(EXTRA_CHARACTER, json);
 */
         //LinearLayout mHolder = (LinearLayout) v.findViewById(R.id.main_information_holder);
-        ImageView mHolder =(ImageView)v.findViewById((R.id.avatar));
+        ImageView mHolder = (ImageView) v.findViewById((R.id.avatar));
         Pair<View, String> holderPair = Pair.create((View) mHolder, "t_item_character");
-        Pair<View, String> navPair=null;
-        Pair<View, String> statusPair=null;
+        Pair<View, String> navPair = null;
+        Pair<View, String> statusPair = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             View navigationBar = findViewById(android.R.id.navigationBarBackground);
             View statusBar = findViewById(android.R.id.statusBarBackground);
             navPair = Pair.create(navigationBar, Window.NAVIGATION_BAR_BACKGROUND_TRANSITION_NAME);
-            statusPair= Pair.create(statusBar, Window.STATUS_BAR_BACKGROUND_TRANSITION_NAME);
+            statusPair = Pair.create(statusBar, Window.STATUS_BAR_BACKGROUND_TRANSITION_NAME);
         }
 
         Gson gson = new Gson();
@@ -148,5 +201,65 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
             options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, holderPair, statusPair);
         }
         ActivityCompat.startActivity(this, i, options.toBundle());
+    }
+
+    private void recoverList() {
+        mDBHelper = DBHelper.getHelper(this);
+        String letters = "";
+        try {
+            Dao dao = mDBHelper.getCharacterDao();
+            QueryBuilder<Characters, Integer> qb = dao.queryBuilder();
+            qb.orderBy("name", true);
+            characters = qb.query();
+            adapter.fillData(characters);
+            adapter.notifyDataSetChanged();
+            mDBHelper.close();
+
+        } catch (SQLException e) {
+            Log.e("MainActivity", e.toString());
+            e.printStackTrace();
+        }
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public static class NetworkStateReceiver extends BroadcastReceiver {
+        public void onReceive(Context context, Intent intent) {
+            Log.d("app", "Network connectivity change");
+            if (intent.getExtras() != null) {
+                NetworkInfo ni = (NetworkInfo) intent.getExtras().get(ConnectivityManager.EXTRA_NETWORK_INFO);
+                if (ni != null && ni.getState() == NetworkInfo.State.CONNECTED) {
+                    Toast.makeText(context.getApplicationContext(), "Conexión a internet", Toast.LENGTH_SHORT).show();
+                } else if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, Boolean.FALSE)) {
+                    Toast.makeText(context.getApplicationContext(), "Sin conexión a internet", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(NetworkStateChanged event){
+        if(!event.isInternetConected()){
+            Toast.makeText(this, "Conexión a internet", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this, "Sin conexión a internet", Toast.LENGTH_SHORT).show();
+        }
     }
 }

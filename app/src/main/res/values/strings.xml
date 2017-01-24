@@ -15,5 +15,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="delete_from_favs">Eliminar de favoritos</string>
     <string name="txt_add_fav">Añadir a favoritos</string>
+    <string name="error_save_comics">Error al guardar los comics</string>
+    <string name="action_settings">Opciones</string>
 
 </resources>
