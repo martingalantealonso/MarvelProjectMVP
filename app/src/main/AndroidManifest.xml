@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".views.resumecharacter.ShowCharacter"></activity>
-        <receiver android:name=".views.main.MainActivity$NetworkStateReceiver">
+        <receiver android:name=".eventbus.NetworkStateReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>

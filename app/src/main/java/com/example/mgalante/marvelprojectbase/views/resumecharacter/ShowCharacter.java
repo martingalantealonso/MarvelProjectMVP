@@ -116,8 +116,7 @@ public class ShowCharacter extends BaseActivity {
         //mFavButton.setVisibility(View.INVISIBLE);
 
         //mFloatingButton.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-        mFloatingButton.setImageResource(R.drawable.icn_morp);
-
+        mFloatingButton.setImageResource(R.drawable.icn_morph_reverse);
         mFloatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

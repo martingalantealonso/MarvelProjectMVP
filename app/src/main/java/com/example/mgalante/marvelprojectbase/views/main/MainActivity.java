@@ -30,12 +30,17 @@ import com.example.mgalante.marvelprojectbase.api.ServiceMarvel;
 import com.example.mgalante.marvelprojectbase.api.entities.Characters;
 import com.example.mgalante.marvelprojectbase.control.adapters.CharactersRecyclerViewAdapter;
 import com.example.mgalante.marvelprojectbase.control.callbacks.CharacterListCallBack;
+import com.example.mgalante.marvelprojectbase.eventbus.NetworkStateChanged;
 import com.example.mgalante.marvelprojectbase.ormlite.DBHelper;
 import com.example.mgalante.marvelprojectbase.views.BaseActivity;
 import com.example.mgalante.marvelprojectbase.views.resumecharacter.ShowCharacter;
 import com.google.gson.Gson;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -93,7 +98,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
                 if (scrollRange + verticalOffset == 0) {
                     mCollapsingToolbarLayout.setTitle("Marvel Heroes");
                     isShow = true;
-                } else if(isShow) {
+                } else if (isShow) {
                     mCollapsingToolbarLayout.setTitle(" ");
                     isShow = false;
                 }
@@ -121,6 +126,8 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
                 if (trimmedText.length() >= 3) {
                     //Iniciar busqueda de Heroes con ese nombre
                     presenter.getHeroes(trimmedText);
+                } else if (trimmedText.length() <= 2) {
+                    recoverList();
                 }
             }
         });
@@ -232,6 +239,27 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
                     Toast.makeText(context.getApplicationContext(), "Sin conexión a internet", Toast.LENGTH_SHORT).show();
                 }
             }
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(NetworkStateChanged event){
+        if(!event.isInternetConected()){
+            Toast.makeText(this, "Conexión a internet", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this, "Sin conexión a internet", Toast.LENGTH_SHORT).show();
         }
     }
 }
