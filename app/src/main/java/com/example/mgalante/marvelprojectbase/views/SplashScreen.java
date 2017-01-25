@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.mgalante.marvelprojectbase.R;
@@ -23,14 +23,13 @@ public class SplashScreen extends AppCompatActivity {
     @Bind(R.id.splash)
     TextView mSplash;
     @Bind(R.id.lin_lay)
-    LinearLayout mLinearLayout;
+    RelativeLayout mLinearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
         ButterKnife.bind(this);
-
         StartAnimations();
     }
 

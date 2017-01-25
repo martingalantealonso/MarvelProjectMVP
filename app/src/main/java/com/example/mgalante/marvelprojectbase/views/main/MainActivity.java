@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
@@ -64,6 +65,8 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
     CollapsingToolbarLayout mCollapsingToolbarLayout;
     @Bind(R.id.app_bar_layout)
     AppBarLayout mAppBarLayout;
+    @Bind(R.id.btn_img)
+    FloatingActionButton mImgBtn;
 
 
     private MainPresenterImpl presenter;
@@ -85,7 +88,6 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
         //setTitle(R.string.busca_tu_superh_roe);
         setSupportActionBar(mToolBar);
         mCollapsingToolbarLayout.setTitle(" ");
-
         mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             boolean isShow = false;
             int scrollRange = -1;
@@ -105,6 +107,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
             }
         });
 
+        mImgBtn.setImageResource(R.drawable.ic_favorite_border_black_24dp);
         if (presenter == null) {
             presenter = new MainPresenterImpl(new ServiceMarvel());
         }
@@ -138,6 +141,13 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
         mListItem.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         mListItem.setAdapter(adapter);
 
+        mImgBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEdTHeroName.setText("");
+                recoverList();
+            }
+        });
         //load Saved Heroes
         recoverList();
 
@@ -179,6 +189,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
         //LinearLayout mHolder = (LinearLayout) v.findViewById(R.id.main_information_holder);
         ImageView mHolder = (ImageView) v.findViewById((R.id.avatar));
         Pair<View, String> holderPair = Pair.create((View) mHolder, "t_item_character");
+        Pair<View, String> holderPair2 = Pair.create((View) mImgBtn, "t_imgbtn");
         Pair<View, String> navPair = null;
         Pair<View, String> statusPair = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -196,10 +207,11 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
 
         ActivityOptionsCompat options;
         if (ViewConfiguration.get(getApplicationContext()).hasPermanentMenuKey()) {
-            options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, holderPair, navPair, statusPair);
+            options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, holderPair, holderPair2, navPair, statusPair);
         } else {
-            options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, holderPair, statusPair);
+            options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, holderPair, holderPair2, statusPair);
         }
+
         ActivityCompat.startActivity(this, i, options.toBundle());
     }
 
@@ -255,10 +267,10 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventMainThread(NetworkStateChanged event){
-        if(!event.isInternetConected()){
+    public void onEventMainThread(NetworkStateChanged event) {
+        if (!event.isInternetConected()) {
             Toast.makeText(this, "Conexión a internet", Toast.LENGTH_SHORT).show();
-        }else{
+        } else {
             Toast.makeText(this, "Sin conexión a internet", Toast.LENGTH_SHORT).show();
         }
     }

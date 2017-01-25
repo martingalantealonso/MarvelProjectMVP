@@ -6,12 +6,14 @@ import android.content.Intent;
 import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.transition.ChangeBounds;
 import android.transition.Fade;
 import android.transition.Transition;
 import android.util.Log;
@@ -81,7 +83,7 @@ public class ShowCharacter extends BaseActivity {
     @Bind(R.id.btn_add)
     ImageButton mFloatingButton;
     @Bind(R.id.btn_fav)
-    ImageButton mFavButton;
+    FloatingActionButton mFavButton;
     @Bind((R.id.llEditTextHolder))
     LinearLayout llTextHolder;
     private SectionsPagerAdapter mSectionsPagerAdapter;
@@ -123,7 +125,6 @@ public class ShowCharacter extends BaseActivity {
                 StartBtnAnimation(v);
             }
         });
-
         mFavTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -140,7 +141,6 @@ public class ShowCharacter extends BaseActivity {
             @Override
             public void onClick(View view) {
                 openUrl(mCharacter.getUrls(), "comiclink");
-
             }
         });
         mDetail.setOnClickListener(new View.OnClickListener() {
@@ -311,14 +311,17 @@ public class ShowCharacter extends BaseActivity {
         Transition fade = new Fade();
         fade.excludeTarget(android.R.id.navigationBarBackground, true);
         fade.excludeTarget(android.R.id.statusBarBackground, true);
-        return fade;
 
+        ChangeBounds bounds = new ChangeBounds();
+        bounds.setDuration(5000);
+
+        return fade;
     }
 
     private void StartBtnAnimation(View view) {
         int cx = llTextHolder.getRight();
-
         int cy = llTextHolder.getBottom() + 32;
+        //From center ->
         //int cx = (llTextHolder.getLeft() + llTextHolder.getRight()) / 2;
         //int cy = (llTextHolder.getTop() + llTextHolder.getBottom()) / 2;
         if (!isEditTextVisible) {
@@ -360,21 +363,19 @@ public class ShowCharacter extends BaseActivity {
     public void onBackPressed() {
         AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
         alphaAnimation.setDuration(100);
-        if (mFavButton.getVisibility() == View.VISIBLE) mFavButton.startAnimation(alphaAnimation);
+        //if (mFavButton.getVisibility() == View.VISIBLE) mFavButton.startAnimation(alphaAnimation);
         mFloatingButton.startAnimation(alphaAnimation);
-
 
         alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
                 mFloatingButton.setVisibility(View.GONE);
 
-                mFavButton.setVisibility(View.GONE);
+                //mFavButton.setVisibility(View.GONE);
 
                 finishAfterTransition();
             }
