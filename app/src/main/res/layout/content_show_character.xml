@@ -34,7 +34,7 @@
                     android:scaleType="fitXY"
                     android:transitionName="t_item_character" />
 
-                <ImageButton
+                <android.support.design.widget.FloatingActionButton
                     android:id="@+id/btn_fav"
                     android:layout_width="@dimen/fav_button_size"
                     android:layout_height="@dimen/fav_button_size"
@@ -44,7 +44,10 @@
                     android:background="@drawable/btn_fav_background"
                     android:contentDescription="@null"
                     android:elevation="@dimen/button_elevation"
-                    android:src="@drawable/ic_favorite_border_black_24dp" />
+                    android:scaleType="center"
+                    android:src="@drawable/ic_favorite_border_black_24dp"
+                    android:transitionName="t_imgbtn"
+                    app:backgroundTint="@color/colorFab" />
 
                 <LinearLayout
                     android:id="@+id/llEditTextHolder"
