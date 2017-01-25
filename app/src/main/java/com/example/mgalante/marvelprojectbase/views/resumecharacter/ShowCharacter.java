@@ -86,6 +86,10 @@ public class ShowCharacter extends BaseActivity {
     FloatingActionButton mFavButton;
     @Bind((R.id.llEditTextHolder))
     LinearLayout llTextHolder;
+    @Bind(R.id.btnShowComics)
+    Button mBtnShowComics;
+    @Bind(R.id.btnShowEvents)
+    Button mBtnShowEvents;
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     //endregion
@@ -155,6 +159,13 @@ public class ShowCharacter extends BaseActivity {
                 openUrl(mCharacter.getUrls(), "wiki");
             }
         });
+        mBtnShowComics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -275,11 +286,12 @@ public class ShowCharacter extends BaseActivity {
                 switch (i) {
                     case 0:
                         title = mCharacter.getComics().getAvailable() + " " + getString(R.string.comics);
+                        mBtnShowComics.setText(title);
                         break;
                     case 1:
                         title = mCharacter.getEvents().getAvailable() + " " + getString(R.string.events);
+                        mBtnShowEvents.setText(title);
                         break;
-
                 }
                 mTablayout.getTabAt(i).setText(title);
             }
