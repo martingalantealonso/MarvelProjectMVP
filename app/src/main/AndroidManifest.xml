@@ -27,17 +27,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".views.resumecharacter.ShowCharacter"></activity>
+        <activity android:name=".views.resumecharacter.ShowCharacter" />
+        <activity android:name=".views.detailscharacter.Launched"></activity>
+        <activity android:name=".views.detailscharacter.Launching"></activity>
+
         <receiver android:name=".eventbus.NetworkStateReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
+
         <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+        <activity android:name=".views.detailscharacter.ComicDetail" />
+        <activity android:name=".views.detailscharacter.EventDetail"></activity>
     </application>
-
-
-
-
 
 </manifest>

@@ -61,7 +61,6 @@ public class CharactersRecyclerViewAdapter extends RecyclerView.Adapter<CommonVi
 
         //setAnimation(holder.itemView, position);
 
-
     }
 
     private void setAnimation(View viewToAnimate, int position) {

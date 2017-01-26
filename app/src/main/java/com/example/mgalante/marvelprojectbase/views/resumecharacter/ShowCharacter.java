@@ -2,10 +2,17 @@ package com.example.mgalante.marvelprojectbase.views.resumecharacter;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.ActivityOptions;
+import android.app.SharedElementCallback;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Animatable;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -13,7 +20,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.transition.ChangeBounds;
 import android.transition.Fade;
 import android.transition.Transition;
 import android.util.Log;
@@ -37,6 +43,9 @@ import com.example.mgalante.marvelprojectbase.api.entities.Comic;
 import com.example.mgalante.marvelprojectbase.api.entities.Url;
 import com.example.mgalante.marvelprojectbase.ormlite.DBHelper;
 import com.example.mgalante.marvelprojectbase.views.BaseActivity;
+import com.example.mgalante.marvelprojectbase.views.detailscharacter.ComicDetail;
+import com.example.mgalante.marvelprojectbase.views.detailscharacter.EventDetail;
+
 import com.google.gson.Gson;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -159,10 +168,33 @@ public class ShowCharacter extends BaseActivity {
                 openUrl(mCharacter.getUrls(), "wiki");
             }
         });
+
         mBtnShowComics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                Gson gson = new Gson();
+                String json = gson.toJson(mCharacter);
+                Intent intent = new Intent(getApplicationContext(), ComicDetail.class);
+                intent.putExtra(EXTRA_CHARACTER, json);
+
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(ShowCharacter.this, v, "hello");
+                startActivity(intent, options.toBundle());
+                //startActivity(intent);
+            }
+        });
+
+        mBtnShowEvents.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Gson gson = new Gson();
+                String json = gson.toJson(mCharacter);
+                Intent intent = new Intent(getApplicationContext(), EventDetail.class);
+                intent.putExtra(EXTRA_CHARACTER, json);
+
+                //ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(ShowCharacter.this, v, "comic_transition");
+                //startActivity(intent, options.toBundle());
+                startActivity(intent);
             }
         });
 
@@ -173,11 +205,82 @@ public class ShowCharacter extends BaseActivity {
         fillTabs();
 
         loadFav();
+
         showAnimImageButton(mFloatingButton);
 
         if (mComicPresenter == null) {
             mComicPresenter = new ComicPresenter();
         }
+
+
+        setEnterSharedElementCallback(new SharedElementCallback() {
+            @Override
+            public View onCreateSnapshotView(Context context, Parcelable snapshot) {
+                View view = new View(context);
+                view.setBackground(new BitmapDrawable((Bitmap) snapshot));
+                return view;
+            }
+
+            @Override
+            public void onSharedElementStart(List<String> sharedElementNames,
+                                             List<View> sharedElements,
+                                             List<View> sharedElementSnapshots) {
+                for (int i = 0; i < sharedElements.size(); i++) {
+                    if (sharedElements.get(i) == mAvatar) {
+                        View snapshot = sharedElementSnapshots.get(i);
+                        Drawable snapshotDrawable = snapshot.getBackground();
+                        mAvatar.setBackground(snapshotDrawable);
+                        mAvatar.setImageAlpha(0);
+                        forceSharedElementLayout();
+                        break;
+                    }
+                }
+            }
+
+            private void forceSharedElementLayout() {
+                int widthSpec = View.MeasureSpec.makeMeasureSpec(mAvatar.getWidth(),
+                        View.MeasureSpec.EXACTLY);
+                int heightSpec = View.MeasureSpec.makeMeasureSpec(mAvatar.getHeight(),
+                        View.MeasureSpec.EXACTLY);
+                int left = mAvatar.getLeft();
+                int top = mAvatar.getTop();
+                int right = mAvatar.getRight();
+                int bottom = mAvatar.getBottom();
+                mAvatar.measure(widthSpec, heightSpec);
+                mAvatar.layout(left, top, right, bottom);
+            }
+
+            @Override
+            public void onSharedElementEnd(List<String> sharedElementNames,
+                                           List<View> sharedElements,
+                                           List<View> sharedElementSnapshots) {
+                mAvatar.setBackground(null);
+                mAvatar.setImageAlpha(255);
+            }
+        });
+
+        /*
+        setExitSharedElementCallback(new android.support.v4.app.SharedElementCallback() {
+            @Override
+            public Parcelable onCaptureSharedElementSnapshot(View sharedElement, Matrix viewToGlobalMatrix, RectF screenBounds) {
+                int bitmapWidth = Math.round(screenBounds.width());
+                int bitmapHeight = Math.round(screenBounds.height());
+                Bitmap bitmap = null;
+                if (bitmapWidth > 0 && bitmapHeight > 0) {
+                    Matrix matrix = new Matrix();
+                    matrix.set(viewToGlobalMatrix);
+                    matrix.postTranslate(-screenBounds.left, -screenBounds.top);
+                    bitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Bitmap.Config.ARGB_8888);
+                    Canvas canvas = new Canvas(bitmap);
+                    canvas.concat(matrix);
+                    sharedElement.draw(canvas);
+                }
+                return bitmap;
+            }
+        });
+
+        */
+
     }
 
     private void loadFav() {
@@ -323,9 +426,6 @@ public class ShowCharacter extends BaseActivity {
         Transition fade = new Fade();
         fade.excludeTarget(android.R.id.navigationBarBackground, true);
         fade.excludeTarget(android.R.id.statusBarBackground, true);
-
-        ChangeBounds bounds = new ChangeBounds();
-        bounds.setDuration(5000);
 
         return fade;
     }

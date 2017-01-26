@@ -4,9 +4,24 @@
     android:layout_height="match_parent"
     tools:context="layout.exampleFragment">
 
-    <View
+    <FrameLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"/>
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true">
 
+        <View
+            android:id="@+id/planter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent" />
+
+        <FrameLayout
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:transitionName="hello" />
+    </FrameLayout>
 </FrameLayout>

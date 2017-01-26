@@ -18,6 +18,7 @@ public interface ComicContract {
         void fillData(List<Comic> list);
 
     }
+
     interface Presenter extends BasePresenter<Context,View>{
         void getComics(int characterId);
         void saveComics(Characters character);

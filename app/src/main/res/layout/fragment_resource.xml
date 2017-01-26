@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp">
 
 
     <LinearLayout
@@ -9,38 +11,48 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
-        android:orientation="horizontal"
-        >
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/avatar"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:scaleType="fitXY"
-            android:transitionName="t_item_character"/>
-
-
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="200dp">
 
-            <TextView
-                android:id="@+id/name"
+            <ImageView
+                android:id="@+id/avatar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Hero Name"
-                android:textSize="20sp" />
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:transitionName="t_item_character" />
 
-            <TextView
-                android:id="@+id/subname"
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Hero Description"
-                android:textSize="16sp" />
+                android:layout_height="45dp"
+                android:layout_gravity="bottom"
+                android:orientation="vertical">
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="left"
+                    android:paddingLeft="10dp"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp"
+                    android:text="Hero name"/>
 
+                <TextView
+                    android:id="@+id/subname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Hero Description"
+                    android:visibility="gone"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+        </FrameLayout>
     </LinearLayout>
 
 </LinearLayout>
