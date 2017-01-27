@@ -12,7 +12,7 @@ import com.example.mgalante.marvelprojectbase.R;
 /**
  * Created by mgalante on 16/01/17.
  */
-public class CommonViewHolder<T> extends RecyclerView.ViewHolder {
+public class CommonViewHolder<T> extends RecyclerView.ViewHolder{
 
 
     public final View mView;
@@ -20,6 +20,7 @@ public class CommonViewHolder<T> extends RecyclerView.ViewHolder {
     public final TextView name;
     public final TextView subname;
     public final ImageView avatar;
+    ComicsRecyclerViewAdapter.OnItemClickListener mItemClickListener;
 
     public T mItem;
 
@@ -42,4 +43,5 @@ public class CommonViewHolder<T> extends RecyclerView.ViewHolder {
                 ", avatar=" + avatar +
                 '}';
     }
+
 }

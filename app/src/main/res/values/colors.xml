@@ -6,4 +6,5 @@
     <color name="colorFab">#f44336</color>
     <color name="colorOption">#b6b6b6</color>
     <color name="colorWhite">#ffffff</color>
+    <color name="colorTransparent">#95000000</color>
 </resources>

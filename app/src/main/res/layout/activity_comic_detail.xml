@@ -1,54 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-
-    <Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/toolbar"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryDark"
-        android:minHeight="?android:attr/actionBarSize"
-     />
+        android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true">
-
-        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/comic_detail_list"
+        <Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:divider="@null"
-            android:listSelector="@android:color/transparent"
-            android:transitionName="comic_transition"
-            tools:listitem="@layout/fragment_resource_list"
-          />
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:minHeight="?android:attr/actionBarSize" />
 
         <FrameLayout
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
+            android:id="@+id/container"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:transitionName="hello" />
+           >
+
+            <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/comic_detail_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="@null"
+                android:listSelector="@android:color/transparent"
+                android:transitionName="comic_transition"
+                tools:listitem="@layout/fragment_resource_list" />
+
+            <FrameLayout
+                android:id="@+id/comic_image_detail_frame"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:transitionName="hello"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/img_comic_detail_max"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    />
+            </FrameLayout>
 
 
-    </FrameLayout>
+        </FrameLayout>
+
+    </LinearLayout>
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/btn_toogle"
         android:layout_width="@dimen/floating_button_size"
         android:layout_height="@dimen/floating_button_size"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
         android:layout_marginBottom="15dp"
         android:layout_marginRight="20dp"
         android:contentDescription="@null"
@@ -56,5 +68,6 @@
         android:scaleType="fitXY"
         android:src="@drawable/ic_action_grid"
         app:layout_anchor="@+id/main_content_holder" />
+
 </RelativeLayout>
 

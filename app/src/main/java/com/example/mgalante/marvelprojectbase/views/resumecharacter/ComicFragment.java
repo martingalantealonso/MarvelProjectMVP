@@ -90,7 +90,6 @@ public class ComicFragment extends Fragment implements ComicContract.View {
         adapter.notifyDataSetChanged();
     }
 
-
     @Override
     public void showMessage(String message) {
         Toast.makeText(mContext,message,Toast.LENGTH_SHORT).show();

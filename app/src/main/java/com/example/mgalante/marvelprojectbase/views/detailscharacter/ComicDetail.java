@@ -1,17 +1,26 @@
 package com.example.mgalante.marvelprojectbase.views.detailscharacter;
 
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import com.bumptech.glide.Glide;
 import com.example.mgalante.marvelprojectbase.R;
 import com.example.mgalante.marvelprojectbase.api.entities.Characters;
 import com.example.mgalante.marvelprojectbase.api.entities.Comic;
@@ -36,7 +45,9 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
     private StaggeredGridLayoutManager mStaggeredLayoutManager;
     private Menu menu;
     private boolean isListView;
-
+    private boolean hideDetail;
+    private String urlImage;
+    private Dialog dialog;
 
     @Bind(R.id.comic_detail_list)
     RecyclerView mComicList;
@@ -44,6 +55,13 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
     Toolbar toolbar;
     @Bind(R.id.btn_toogle)
     FloatingActionButton mTootleBtn;
+    @Bind(R.id.comic_image_detail_frame)
+    FrameLayout mDetailComicMax;
+    @Bind(R.id.img_comic_detail_max)
+    ImageView mComicDetailMax;
+    @Bind(R.id.container)
+    FrameLayout mMainContainer;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,6 +85,7 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
                 toggle();
             }
         });
+
         //region Rellenando el Recycler
         if (mComicPresenter == null) {
             mComicPresenter = new ComicPresenter();
@@ -149,6 +168,65 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
             }
         });
         */
+
+        mComicsAdapter.setOnItemClickListener(onItemClickListener);
+        mComicList.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+                if (e.getAction() == MotionEvent.ACTION_UP && hideDetail) {
+                    //Toast.makeText(getApplicationContext(), "HET", Toast.LENGTH_SHORT).show();
+                    //AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
+                    //alphaAnimation.setDuration(1000);
+                    //mDetailComicMax.startAnimation(alphaAnimation);
+                    //mDetailComicMax.setVisibility(View.INVISIBLE);
+
+                    //Dismiss Dialog
+                    hideQuickView();
+                    hideDetail = false;
+                }
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+            }
+        });
+    }
+
+
+    ComicsRecyclerViewAdapter.OnItemClickListener onItemClickListener = new ComicsRecyclerViewAdapter.OnItemClickListener() {
+
+        @Override
+        public void onItemClick(View view, int position) {
+            urlImage = comicList.get(position).getThumbnail().getPath() + "." + comicList.get(position).getThumbnail().getExtension();
+            Log.i("ImgResource", comicList.get(position).getThumbnail().getPath() + "." + comicList.get(position).getThumbnail().getExtension());
+            hideDetail = true;
+            showQuickView();
+        }
+    };
+
+
+    private void showQuickView() {
+        mComicList.setNestedScrollingEnabled(false);
+        dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_imagevw);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        //set the custom dialog components
+        ImageView imageZoom = (ImageView) dialog.findViewById(R.id.imgvw_dialog);
+        Glide.with(this).load(urlImage).into(imageZoom);
+
+        dialog.show();
+    }
+
+    public void hideQuickView() {
+        mComicList.setNestedScrollingEnabled(true);
+
+        if (dialog != null) dialog.dismiss();
     }
 
     @Override
@@ -174,6 +252,7 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
         mComicsAdapter.fillData(comicList);
         mComicsAdapter.notifyDataSetChanged();
     }
+
 
     @Override
     public void setPresenter(ComicContract.Presenter presenter) {
