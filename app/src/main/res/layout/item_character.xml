@@ -12,7 +12,8 @@
         android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:elevation="5dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+       >
 
         <!--
 
@@ -22,7 +23,8 @@
             android:layout_height="60dp"
             android:transitionName="t_item_character" />
 
--->
+        -->
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/avatar"
             android:layout_width="60dp"
