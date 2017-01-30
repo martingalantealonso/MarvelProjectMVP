@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.example.mgalante.marvelprojectbase.R;
 import com.example.mgalante.marvelprojectbase.api.entities.Event;
 import com.example.mgalante.marvelprojectbase.control.adapters.EventsRecyclerViewAdapter;
+import com.example.mgalante.marvelprojectbase.control.callbacks.CommonListCallBack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.List;
  * Created by mgalante on 19/01/17.
  */
 
-public class EventFragment extends Fragment implements EventContract.View {
+public class EventFragment extends Fragment implements EventContract.View , CommonListCallBack {
 
     private static final String ARG_CHARACTER = "charId";
     private int characterId;
@@ -64,7 +65,7 @@ public class EventFragment extends Fragment implements EventContract.View {
             mRecyclerView = (RecyclerView) view;
             mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
             List<Event> entitites = new ArrayList<>();
-            mEventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(mContext, entitites);
+            mEventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(mContext, entitites,this);
             mRecyclerView.setAdapter(mEventsRecyclerViewAdapter);
             this.mEventPresenter.getEvents(characterId);
         }
@@ -90,5 +91,10 @@ public class EventFragment extends Fragment implements EventContract.View {
     @Override
     public void showMessage(String message) {
         Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onLongClickElement(View v, Event item) {
+
     }
 }

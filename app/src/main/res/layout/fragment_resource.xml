@@ -7,7 +7,9 @@
     android:orientation="vertical"
     android:padding="10dp"
     card_view:cardCornerRadius="5dp"
-    card_view:cardElevation="5dp">
+    card_view:cardElevation="5dp"
+    android:stateListAnimator="@drawable/translation_selector"
+    >
 
 
     <LinearLayout

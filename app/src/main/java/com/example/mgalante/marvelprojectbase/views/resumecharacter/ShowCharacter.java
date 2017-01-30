@@ -36,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.mgalante.marvelprojectbase.R;
@@ -46,7 +47,6 @@ import com.example.mgalante.marvelprojectbase.ormlite.DBHelper;
 import com.example.mgalante.marvelprojectbase.views.BaseActivity;
 import com.example.mgalante.marvelprojectbase.views.detailscharacter.ComicDetail;
 import com.example.mgalante.marvelprojectbase.views.detailscharacter.EventDetail;
-
 import com.google.gson.Gson;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -57,7 +57,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class ShowCharacter extends BaseActivity {
+public class ShowCharacter extends BaseActivity{
 
     private static final String EXTRA_CHARACTER = "character";
     private static final String TAG = "Marvel_ShowCharacter";
@@ -355,9 +355,11 @@ public class ShowCharacter extends BaseActivity {
                         switch (code) {
                             case 0:
                                 Log.i("Snackbar", "Eliminar Heroe");
+                                Toast.makeText(getApplicationContext(), "Accion aun no implementada", Toast.LENGTH_SHORT).show();
                                 break;
                             case 1:
                                 Log.i("Snackbar", "Guardar Heroe");
+                                Toast.makeText(getApplicationContext(), "Accion aun no implementada", Toast.LENGTH_SHORT).show();
                                 break;
                         }
                     }
@@ -502,6 +504,11 @@ public class ShowCharacter extends BaseActivity {
             }
         });
     }
+
+    /*@Override
+    public void onLongClickElement(View v, Event item) {
+       Toast.makeText(getApplicationContext(),"Pulsado "+item.getTitle(),Toast.LENGTH_SHORT).show();
+    }*/
 
     private class SectionsPagerAdapter extends FragmentPagerAdapter {
 
