@@ -88,7 +88,11 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this, this);
 
-        //region Cosas que no importan
+        //Para hacer la statusbar transparente y que la activity se ponga por debajo de ella (FULLSCREEN)
+        //getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        //getWindow().setStatusBarColor(Color.TRANSPARENT);
+
+        //region Cosas que no importan (setExitSharedElement|HideKeyboard|setSupportActionbar...)
         setExitSharedElementCallback(new SharedElementCallback() {
             @Override
             public Parcelable onCaptureSharedElementSnapshot(View sharedElement, Matrix viewToGlobalMatrix, RectF screenBounds) {
@@ -133,15 +137,11 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
         });
         mImgBtn.setImageResource(R.drawable.ic_favorite_border_black_24dp);
 
+        //endregion
 
         if (presenter == null) {
             presenter = new MainPresenterImpl(new ServiceMarvel());
         }
-        //endregion
-
-        //getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        //getWindow().setStatusBarColor(Color.TRANSPARENT);
-
         presenter.attach(this, this);
 
         mEdTHeroName.addTextChangedListener(new TextWatcher() {
@@ -171,6 +171,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
         mListItem.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         mListItem.setAdapter(adapter);
 
+        //Show saved heroes
         mImgBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -178,7 +179,8 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
                 recoverList();
             }
         });
-        //load Saved Heroes
+
+        //load Saved Heroes for the first time
         recoverList();
 
     }
@@ -264,6 +266,8 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
         }
     }
 
+    //region Network EventListener
+
     public static class NetworkStateReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
             Log.d("app", "Network connectivity change");
@@ -298,14 +302,6 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
             Toast.makeText(this, "Sin conexión a internet", Toast.LENGTH_SHORT).show();
         }
     }
+    //endregion
 
-    //region isNetworkAvailable
-    /*
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }*/
-//endregion
 }

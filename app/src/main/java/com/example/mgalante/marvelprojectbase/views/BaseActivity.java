@@ -8,6 +8,9 @@ import butterknife.ButterKnife;
 
 /**
  * Created by mgalante on 16/01/17.
+ *
+ * 4.-Una vez completados los pasos anteriores ya estamos listos para inyectar nuestras dependencias
+ *    en el Activity, para ello tenemos que hacernos con una referencia a nuestro SystemComponent.
  */
 
 public abstract class BaseActivity extends AppCompatActivity {

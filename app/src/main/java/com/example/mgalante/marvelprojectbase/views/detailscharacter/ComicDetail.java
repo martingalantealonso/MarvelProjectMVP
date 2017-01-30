@@ -1,8 +1,9 @@
 package com.example.mgalante.marvelprojectbase.views.detailscharacter;
 
+import android.app.Activity;
 import android.app.Dialog;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -14,9 +15,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
@@ -25,6 +28,7 @@ import com.example.mgalante.marvelprojectbase.R;
 import com.example.mgalante.marvelprojectbase.api.entities.Characters;
 import com.example.mgalante.marvelprojectbase.api.entities.Comic;
 import com.example.mgalante.marvelprojectbase.control.adapters.ComicsRecyclerViewAdapter;
+import com.example.mgalante.marvelprojectbase.utils.BlurBuilder;
 import com.example.mgalante.marvelprojectbase.views.resumecharacter.ComicContract;
 import com.example.mgalante.marvelprojectbase.views.resumecharacter.ComicPresenter;
 import com.google.gson.Gson;
@@ -60,7 +64,9 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
     @Bind(R.id.img_comic_detail_max)
     ImageView mComicDetailMax;
     @Bind(R.id.container)
-    FrameLayout mMainContainer;
+    FrameLayout mFrameMainContainer;
+    @Bind(R.id.comic_detail_main_container)
+    LinearLayout mLinearMainContainer;
 
 
     @Override
@@ -211,11 +217,32 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
 
 
     private void showQuickView() {
+
+        final Activity activity = this;
+        final View content = activity.findViewById(android.R.id.content).getRootView();
         mComicList.setNestedScrollingEnabled(false);
-        dialog = new Dialog(this,R.style.PauseDialogAnimation);
+
+        dialog = new Dialog(this, R.style.PauseDialogAnimation);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_imagevw);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        //dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        //dialog.getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorTransparent)));
+        //dialog.getWindow().setLayout(, 400); //Dialog size
+
+        //Set the blur background
+        if (content.getWidth() > 0) {
+            Bitmap image = BlurBuilder.blur(content);
+            dialog.getWindow().setBackgroundDrawable(new BitmapDrawable(activity.getResources(), image));
+        } else {
+            content.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    Bitmap image = BlurBuilder.blur(content);
+                    dialog.getWindow().setBackgroundDrawable(new BitmapDrawable(activity.getResources(), image));
+                }
+            });
+        }
+
         //set the custom dialog components
         ImageView imageZoom = (ImageView) dialog.findViewById(R.id.imgvw_dialog);
         Glide.with(this).load(urlImage).into(imageZoom);

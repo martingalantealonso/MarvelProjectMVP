@@ -19,8 +19,8 @@
     </style>
 
     <style name="PauseDialogAnimation">
-        <item name="android:windowEnterAnimation">@anim/alpha</item>
-        <item name="android:windowExitAnimation">@anim/up_from_bottom</item>
+        <item name="android:windowEnterAnimation">@anim/anim_in</item>
+        <item name="android:windowExitAnimation">@anim/anim_out</item>
     </style>
 
 </resources>

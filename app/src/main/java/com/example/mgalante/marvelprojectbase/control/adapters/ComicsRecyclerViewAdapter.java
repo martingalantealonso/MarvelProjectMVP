@@ -22,7 +22,7 @@ import java.util.List;
 public class ComicsRecyclerViewAdapter extends RecyclerView.Adapter<ComicsRecyclerViewAdapter.ViewHolder> {
     private final Context mContext;
     private List<Comic> mValues;
-    OnItemClickListener mItemClickListener;
+    OnItemClickListener mItemClickListener;  //No olvidarse de añadirlo en el constructor del ViewHolder
 
     public ComicsRecyclerViewAdapter(Context mContext, List<Comic> mValues) {
         this.mContext = mContext;
