@@ -212,7 +212,7 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
 
     private void showQuickView() {
         mComicList.setNestedScrollingEnabled(false);
-        dialog = new Dialog(this);
+        dialog = new Dialog(this,R.style.PauseDialogAnimation);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_imagevw);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

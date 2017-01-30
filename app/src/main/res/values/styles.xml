@@ -18,4 +18,9 @@
         <item name="android:textSize">15sp</item>
     </style>
 
+    <style name="PauseDialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/alpha</item>
+        <item name="android:windowExitAnimation">@anim/up_from_bottom</item>
+    </style>
+
 </resources>
