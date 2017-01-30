@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.example.mgalante.marvelprojectbase.R;
 import com.example.mgalante.marvelprojectbase.api.entities.Event;
+import com.example.mgalante.marvelprojectbase.control.callbacks.CommonListCallBack;
 
 import java.util.List;
 
@@ -20,10 +21,12 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<CommonViewHo
 
     private final Context mContext;
     private List<Event> mValues;
+    private CommonListCallBack mCommonListCallBack;
 
-    public EventsRecyclerViewAdapter(Context mContext, List<Event> mValues) {
+    public EventsRecyclerViewAdapter(Context mContext, List<Event> mValues, CommonListCallBack listener) {
         this.mContext = mContext;
         this.mValues = mValues;
+        this.mCommonListCallBack = listener;
     }
 
     @Override
@@ -33,13 +36,21 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<CommonViewHo
     }
 
     @Override
-    public void onBindViewHolder(CommonViewHolder<Event> holder, int position) {
+    public void onBindViewHolder(CommonViewHolder<Event> holder, final int position) {
         holder.mItem = mValues.get(position);
         holder.name.setText(mValues.get(position).getTitle());
         holder.subname.setText(mValues.get(position).getDescription());
 
         String urlImage = mValues.get(position).getThumbnail().getPath() + "." + mValues.get(position).getThumbnail().getExtension();
         Glide.with(mContext).load(urlImage).into(holder.avatar);
+
+        holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                mCommonListCallBack.onLongClickElement(v, mValues.get(position));
+                return true;
+            }
+        });
     }
 
     @Override

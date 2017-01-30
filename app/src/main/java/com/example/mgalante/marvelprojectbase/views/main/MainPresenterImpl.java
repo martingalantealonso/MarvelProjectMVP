@@ -36,13 +36,12 @@ public class MainPresenterImpl implements MainContract.Presenter {
     public void getHeroes(String search) {
         //1ºCrear la request. Cadena que se manda al servidor de Marvel para que de acceso
         final SendRequest request = SendRequest.create();
-        //2º Se crea lo que será la cadena para buscar heroes
+        //2º Se crea lo que será la cadena para buscar heroes. Retrofit
         Call<BaseResponse<Characters>> call = mService.getService(mContext).getCharactersByStartsWith(search, "1", request.getPublicKey(), request.getHashSignature());
         //3ª Ahora que esta definida, se genera de forma asincrona para que no pete la aplicación
         call.enqueue(new Callback<BaseResponse<Characters>>() {
             @Override
             public void onResponse(Call<BaseResponse<Characters>> call, Response<BaseResponse<Characters>> response) {
-
                 //4º Si la respuesta es correcta, obtenidos los datos de respuesta, se mandan para que aparezcan en la activity
                 if (response.isSuccessful()) {
                     if (response.body().data != null && response.body().data.results.size() > 0){

@@ -7,12 +7,15 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.example.mgalante.marvelprojectbase.R;
 import com.example.mgalante.marvelprojectbase.api.entities.Characters;
 import com.example.mgalante.marvelprojectbase.api.entities.Event;
 import com.example.mgalante.marvelprojectbase.control.adapters.EventsRecyclerViewAdapter;
+import com.example.mgalante.marvelprojectbase.control.callbacks.CommonListCallBack;
 import com.example.mgalante.marvelprojectbase.views.resumecharacter.EventContract;
 import com.example.mgalante.marvelprojectbase.views.resumecharacter.EventPresenterImpl;
 import com.google.gson.Gson;
@@ -23,7 +26,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class EventDetail extends AppCompatActivity implements EventContract.View {
+public class EventDetail extends AppCompatActivity implements EventContract.View ,CommonListCallBack {
 
     private static final String EXTRA_CHARACTER = "character";
     private Characters mCharacter;
@@ -67,7 +70,7 @@ public class EventDetail extends AppCompatActivity implements EventContract.View
         eventPresenter.attach(this, this);
 
         eventList = new ArrayList<>();
-        mEventsAdapter = new EventsRecyclerViewAdapter(this, eventList);
+        mEventsAdapter = new EventsRecyclerViewAdapter(this, eventList,this);
         //mEventRecyclerList.setLayoutManager(new LinearLayoutManager(EventDetail.this));
         mEventRecyclerList.setLayoutManager(mStaggeredLayoutManager);
         mEventRecyclerList.setAdapter(mEventsAdapter);
@@ -126,5 +129,10 @@ public class EventDetail extends AppCompatActivity implements EventContract.View
             item.setTitle("Show as list");
             isListView = true;
         }
+    }
+
+    @Override
+    public void onLongClickElement(View v, Event item) {
+        Toast.makeText(getApplicationContext(),"Pulsado "+item.getTitle(),Toast.LENGTH_SHORT).show();
     }
 }

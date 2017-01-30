@@ -259,7 +259,6 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
             adapter.fillData(characters);
             adapter.notifyDataSetChanged();
             mDBHelper.close();
-
         } catch (SQLException e) {
             Log.e("MainActivity", e.toString());
             e.printStackTrace();
