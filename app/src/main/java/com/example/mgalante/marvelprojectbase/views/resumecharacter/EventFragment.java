@@ -54,7 +54,6 @@ public class EventFragment extends Fragment implements EventContract.View {
     }
 
     //4º Sobreescribir el onCreateView
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 

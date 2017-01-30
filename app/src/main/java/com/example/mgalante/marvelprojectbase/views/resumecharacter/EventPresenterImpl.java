@@ -50,6 +50,10 @@ public class EventPresenterImpl implements EventContract.Presenter  {
     private EventContract.View mView;
     private Context mContext;
 
+    public EventPresenterImpl() {
+
+    }
+
     public void attach(Context context, EventContract.View view) {
         this.mContext = context;
         this.mView = view;

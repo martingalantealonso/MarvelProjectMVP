@@ -14,12 +14,13 @@ import java.util.List;
  */
 
 public interface ComicContract {
-    interface View extends BaseView<Presenter>{
+    interface View extends BaseView<Presenter> {
         void fillData(List<Comic> list);
-
     }
-    interface Presenter extends BasePresenter<Context,View>{
+
+    interface Presenter extends BasePresenter<Context, View> {
         void getComics(int characterId);
+
         void saveComics(Characters character);
     }
 

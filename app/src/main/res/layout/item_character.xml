@@ -19,7 +19,6 @@
             android:id="@+id/avatar"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:scaleType="fitXY"
             android:transitionName="t_item_character" />
 
 

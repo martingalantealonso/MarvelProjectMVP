@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorFab"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
@@ -24,7 +25,8 @@
             <FrameLayout
                 android:id="@+id/header"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimaryDark">
 
                 <ImageView
                     android:id="@+id/avatar"
@@ -40,7 +42,7 @@
                     android:layout_height="@dimen/fav_button_size"
                     android:layout_gravity="top|right"
                     android:layout_marginRight="26dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="25dp"
                     android:background="@drawable/btn_fav_background"
                     android:contentDescription="@null"
                     android:elevation="@dimen/button_elevation"
@@ -62,6 +64,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
+                        android:layout_marginTop="20dp"
                         android:text="@string/txt_add_fav"
                         android:textAlignment="viewStart"
                         android:textAllCaps="false"
@@ -103,6 +106,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/header"
+                android:background="@color/colorPrimaryDark"
                 android:elevation="1dp"
                 android:orientation="vertical"
                 android:padding="10dp">
@@ -143,7 +147,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="272dp"
+            android:layout_height="wrap_content"
             android:background="@color/colorFab"
             android:orientation="vertical"
             android:padding="@dimen/activity_horizontal_margin">
@@ -205,13 +209,47 @@
                 android:id="@+id/tablayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimaryDark" />
+                android:background="@color/colorPrimaryDark"
+                android:visibility="gone" />
 
 
             <android.support.v4.view.ViewPager
                 android:id="@+id/viewpager"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnShowComics"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/floating_button_size"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimaryDark"
+                    android:text="Comics"
+                    android:textColor="@color/colorOption"
+                    android:transitionName="hello" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.7" />
+
+                <Button
+                    android:id="@+id/btnShowEvents"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/floating_button_size"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimaryDark"
+                    android:text="Events"
+                    android:textColor="@color/colorOption" />
+            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>
