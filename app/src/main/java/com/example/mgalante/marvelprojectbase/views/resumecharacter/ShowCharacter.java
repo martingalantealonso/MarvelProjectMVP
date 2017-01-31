@@ -72,6 +72,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static com.example.mgalante.marvelprojectbase.R.id.avatar;
 import static com.example.mgalante.marvelprojectbase.utils.Constants.LOGTAG;
 import static com.example.mgalante.marvelprojectbase.utils.Utils.addBitmapToMemoryCache;
+import static com.example.mgalante.marvelprojectbase.utils.Utils.createFileAppFolder;
 import static com.example.mgalante.marvelprojectbase.utils.Utils.createFileWithActivity;
 import static com.example.mgalante.marvelprojectbase.utils.Utils.getBitmapFromMemCache;
 import static com.example.mgalante.marvelprojectbase.utils.Utils.shareCacheImage;
@@ -388,6 +389,7 @@ public class ShowCharacter extends BaseActivity {
                         //Bitmap bitmap = ((GlideBitmapDrawable) mCircleDialogImage.getDrawable().getCurrent()).getBitmap();
                         //addBitmapToMemoryCache("CharacterImage", bitmap);
                         createFileWithActivity(thisActivity, mCharacter.getName());
+                        createFileAppFolder(mCharacter.getName());
                     }
                 }.start();
             }
