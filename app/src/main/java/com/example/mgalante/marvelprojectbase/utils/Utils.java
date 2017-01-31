@@ -142,6 +142,43 @@ public class Utils {
         }
     }
 
+    public static void createFileAppFolder(final String filename) {
+
+        Drive.DriveApi.newDriveContents(apiClient)
+                .setResultCallback(new ResultCallback<DriveApi.DriveContentsResult>() {
+                    @Override
+                    public void onResult(DriveApi.DriveContentsResult result) {
+                        if (result.getStatus().isSuccess()) {
+
+                            getCacheimage(result.getDriveContents());
+
+                            MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
+                                    .setTitle(filename)
+                                    .setMimeType("image/png")
+                                    .build();
+
+                            //Carpeta de Aplicación (App Folder)
+                            DriveFolder folder = Drive.DriveApi.getAppFolder(apiClient);
+
+                            folder.createFile(apiClient, changeSet, result.getDriveContents())
+                                    .setResultCallback(new ResultCallback<DriveFolder.DriveFileResult>() {
+                                        @Override
+                                        public void onResult(DriveFolder.DriveFileResult result) {
+                                            if (result.getStatus().isSuccess()) {
+                                                Log.i(LOGTAG, "Fichero creado con ID = " + result.getDriveFile().getDriveId());
+                                            } else {
+                                                Log.e(LOGTAG, "Error al crear el fichero");
+                                            }
+                                        }
+                                    });
+                        } else {
+                            Log.e(LOGTAG, "Error al crear DriveContents");
+                        }
+                    }
+                });
+    }
+
+
     /**
      * Elimina un archivo de Google Drive
      */

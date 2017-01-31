@@ -39,6 +39,7 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
                 .enableAutoManage(this, this)
                 .addApi(Drive.API)
                 .addScope(Drive.SCOPE_FILE)
+                .addScope(Drive.SCOPE_APPFOLDER)
                 .build();
 
         mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
