@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:background="@drawable/dialog_radius"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="400dp"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/dialog_white_view"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_alignParentTop="true"
+            android:background="@color/colorFab" />
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="300dp"
+            android:layout_below="@id/dialog_white_view" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/circleImageViewDialog"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="35dp" />
+
+        <TextView
+            android:id="@+id/dialog_hero_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:text="Heroe Name"
+            android:textAlignment="center"
+            android:textAppearance="@android:style/TextAppearance.Material.Body1"
+            android:textSize="20sp" />
+
+        <ImageButton
+            android:id="@+id/imageButtonDrive"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="61dp"
+            android:layout_marginStart="70dp"
+            android:background="?android:selectableItemBackground"
+            android:scaleType="fitXY"
+            app:srcCompat="@drawable/drive_icon" />
+
+        <ImageButton
+            android:id="@+id/imageButtonShare"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignTop="@+id/imageButtonDrive"
+            android:layout_marginStart="62dp"
+            android:layout_toEndOf="@+id/imageButtonDrive"
+            android:background="?android:selectableItemBackground"
+            android:scaleType="fitXY"
+            app:srcCompat="@drawable/share_icon" />
+
+    </RelativeLayout>
+
+</LinearLayout>

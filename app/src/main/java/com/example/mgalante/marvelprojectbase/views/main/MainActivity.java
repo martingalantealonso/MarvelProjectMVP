@@ -219,6 +219,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
         i.putExtra(EXTRA_CHARACTER, json);
 */
         //LinearLayout mHolder = (LinearLayout) v.findViewById(R.id.main_information_holder);
+
         mHolder = (ImageView) v.findViewById((R.id.avatar));
         Pair<View, String> holderPair = Pair.create((View) mHolder, "t_item_character");
         Pair<View, String> holderPair2 = Pair.create((View) mImgBtn, "t_imgbtn");
