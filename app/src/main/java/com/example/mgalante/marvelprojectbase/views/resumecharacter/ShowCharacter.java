@@ -2,7 +2,9 @@ package com.example.mgalante.marvelprojectbase.views.resumecharacter;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
 import android.app.ActivityOptions;
+import android.app.Dialog;
 import android.app.SharedElementCallback;
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +30,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
@@ -39,14 +43,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.example.mgalante.marvelprojectbase.R;
 import com.example.mgalante.marvelprojectbase.api.entities.Characters;
 import com.example.mgalante.marvelprojectbase.api.entities.Comic;
 import com.example.mgalante.marvelprojectbase.api.entities.Url;
 import com.example.mgalante.marvelprojectbase.ormlite.DBHelper;
+import com.example.mgalante.marvelprojectbase.utils.BlurBuilder;
 import com.example.mgalante.marvelprojectbase.views.BaseActivity;
 import com.example.mgalante.marvelprojectbase.views.detailscharacter.ComicDetail;
 import com.example.mgalante.marvelprojectbase.views.detailscharacter.EventDetail;
+import com.google.android.gms.drive.DriveFolder;
+import com.google.android.gms.drive.DriveId;
+import com.google.android.gms.drive.OpenFileActivityBuilder;
 import com.google.gson.Gson;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -56,8 +67,16 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ShowCharacter extends BaseActivity{
+import static com.example.mgalante.marvelprojectbase.R.id.avatar;
+import static com.example.mgalante.marvelprojectbase.utils.Constants.LOGTAG;
+import static com.example.mgalante.marvelprojectbase.utils.Utils.addBitmapToMemoryCache;
+import static com.example.mgalante.marvelprojectbase.utils.Utils.createFileWithActivity;
+import static com.example.mgalante.marvelprojectbase.utils.Utils.getBitmapFromMemCache;
+import static com.example.mgalante.marvelprojectbase.utils.Utils.shareCacheImage;
+
+public class ShowCharacter extends BaseActivity {
 
     private static final String EXTRA_CHARACTER = "character";
     private static final String TAG = "Marvel_ShowCharacter";
@@ -68,13 +87,18 @@ public class ShowCharacter extends BaseActivity{
     private Animatable mAnimatable;
     private DBHelper mDBHelper;
     private List<Comic> mComics;
+    private String urlImage;
+    private DriveFolder marvelFolder;
+    private Activity thisActivity;
 
     //region Binds
     @Bind(R.id.main_information_holder)
     RelativeLayout mHolder;
     @Bind(R.id.txtInfoFav)
     TextView mFavTextView;
-    @Bind(R.id.avatar)
+    @Bind(R.id.txtOther)
+    TextView mOtherOptions;
+    @Bind(avatar)
     ImageView mAvatar;
     @Bind(R.id.name)
     TextView mName;
@@ -100,6 +124,18 @@ public class ShowCharacter extends BaseActivity{
     Button mBtnShowComics;
     @Bind(R.id.btnShowEvents)
     Button mBtnShowEvents;
+
+    //Dialog
+    // @Bind(R.id.circleImageViewDialog)
+    //CircleImageView mCircleDialogImage;
+    /*@Bind(R.id.dialog_hero_name)
+    TextView mDialogHeroName;
+    @Bind(R.id.imageButtonDrive)
+    ImageButton mDriveBtn;
+    @Bind(R.id.imageButtonShare)
+    ImageButton mShareBtn;
+    */
+
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     //endregion
@@ -111,6 +147,8 @@ public class ShowCharacter extends BaseActivity{
 
         ButterKnife.bind(this);
 
+        thisActivity = this;
+
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
 
@@ -120,13 +158,24 @@ public class ShowCharacter extends BaseActivity{
         String json = getIntent().getExtras().getString(EXTRA_CHARACTER);
         mCharacter = gson.fromJson(json, Characters.class);
         setTitle(mCharacter.getName());
-        String urlImage = null;
+        urlImage = null;
         if (mCharacter.getThumbnail() != null) {
             urlImage = mCharacter.getThumbnail().getPath() + "." + mCharacter.getThumbnail().getExtension();
         } else {
             urlImage = mCharacter.getImageUrl();
         }
-        Glide.with(this).load(urlImage).into(mAvatar);
+
+        Glide.with(this)
+                .load(urlImage)
+                .into(new GlideDrawableImageViewTarget(mAvatar) {
+                    @Override
+                    protected void setResource(GlideDrawable resource) {
+                        super.setResource(resource);
+                        Bitmap bitmap = ((GlideBitmapDrawable) mAvatar.getDrawable().getCurrent()).getBitmap();
+                        addBitmapToMemoryCache("CharacterImage", bitmap);
+                    }
+                });
+
 
         mName.setText(mCharacter.getName());
         mDescription.setText(mCharacter.getDescription());
@@ -146,6 +195,12 @@ public class ShowCharacter extends BaseActivity{
             @Override
             public void onClick(View v) {
                 saveFavorite();
+            }
+        });
+        mOtherOptions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCustomDialog();
             }
         });
         mFavButton.setOnClickListener(new View.OnClickListener() {
@@ -176,7 +231,7 @@ public class ShowCharacter extends BaseActivity{
         mBtnShowComics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                //region StartActivity ComicDetail
                 Gson gson = new Gson();
                 String json = gson.toJson(mCharacter);
                 Intent intent = new Intent(getApplicationContext(), ComicDetail.class);
@@ -185,12 +240,14 @@ public class ShowCharacter extends BaseActivity{
                 ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(ShowCharacter.this, v, "hello");
                 startActivity(intent, options.toBundle());
                 //startActivity(intent);
+                //endregion
             }
         });
 
         mBtnShowEvents.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //region StartActivity EventDetail
                 Gson gson = new Gson();
                 String json = gson.toJson(mCharacter);
                 Intent intent = new Intent(getApplicationContext(), EventDetail.class);
@@ -199,6 +256,7 @@ public class ShowCharacter extends BaseActivity{
                 //ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(ShowCharacter.this, v, "comic_transition");
                 //startActivity(intent, options.toBundle());
                 startActivity(intent);
+                //endregion
             }
         });
 
@@ -285,6 +343,63 @@ public class ShowCharacter extends BaseActivity{
 
         */
 
+    }
+
+    private void showCustomDialog() {
+        final Activity activity = this;
+        final View content = activity.findViewById(android.R.id.content).getRootView();
+
+        final Dialog dialog = new Dialog(this, R.style.PauseDialogAnimation);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_hero_detail_options);
+
+        //region Set the blur background
+        if (content.getWidth() > 0) {
+            Bitmap image = BlurBuilder.blur(content);
+            dialog.getWindow().setBackgroundDrawable(new BitmapDrawable(activity.getResources(), image));
+        } else {
+            content.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    Bitmap image = BlurBuilder.blur(content);
+                    dialog.getWindow().setBackgroundDrawable(new BitmapDrawable(activity.getResources(), image));
+                }
+            });
+        }
+        //endregion
+
+        //set the custom dialog components
+        final CircleImageView mCircleDialogImage = (CircleImageView) dialog.findViewById(R.id.circleImageViewDialog);
+        TextView mDialogHeroName=(TextView)dialog.findViewById(R.id.dialog_hero_name);
+        mDialogHeroName.setText(mCharacter.getName());
+        //Glide.with(this).load(urlImage).into(mCircleDialogImage);
+        mCircleDialogImage.setImageBitmap(getBitmapFromMemCache("CharacterImage"));
+        ImageButton btnDrive = (ImageButton) dialog.findViewById(R.id.imageButtonDrive);
+        ImageButton btnShare = (ImageButton) dialog.findViewById(R.id.imageButtonShare);
+
+        btnDrive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        //createFolder("Marvel");
+                        //createFileWithActivity(thisActivity,urlImage);
+                        //Bitmap bitmap = ((GlideBitmapDrawable) mCircleDialogImage.getDrawable().getCurrent()).getBitmap();
+                        //addBitmapToMemoryCache("CharacterImage", bitmap);
+                        createFileWithActivity(thisActivity, mCharacter.getName());
+                    }
+                }.start();
+            }
+        });
+
+        btnShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(Intent.createChooser(shareCacheImage("CharacterImage"), "Share Image"));
+            }
+        });
+        dialog.show();
     }
 
     private void loadFav() {
@@ -550,6 +665,25 @@ public class ShowCharacter extends BaseActivity{
         @Override
         public CharSequence getPageTitle(int position) {
             return "";
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case 001:
+                if (resultCode == RESULT_OK) {
+                    DriveId driveId = data.getParcelableExtra(
+                            OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
+
+                    Log.i(LOGTAG, "Fichero creado con ID = " + driveId);
+                    //makeSnackbar("Heroe Creado",2);
+                    Toast.makeText(getApplicationContext(), "Imagen guardada", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+                break;
         }
     }
 
