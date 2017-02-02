@@ -58,5 +58,14 @@ dependencies {
     //Google Drive
     compile 'com.google.android.gms:play-services-drive:10.0.1'
 
+    //Firebase
+    compile 'com.google.firebase:firebase-messaging:10.0.0'
+
+    //Tooltip
+    compile 'com.github.vihtarb:tooltip:0.1.9'
+
+    //FloatingButton
+    compile 'com.github.clans:fab:1.6.4'
 
 }
+apply plugin: 'com.google.gms.google-services'
