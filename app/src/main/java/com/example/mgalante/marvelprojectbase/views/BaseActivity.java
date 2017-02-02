@@ -35,6 +35,7 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
         setContentView(getLayoutId());
         ButterKnife.bind(this);
 
+
         Constants.apiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
                 .addApi(Drive.API)

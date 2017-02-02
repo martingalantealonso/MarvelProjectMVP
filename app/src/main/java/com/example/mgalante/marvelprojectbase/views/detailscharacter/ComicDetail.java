@@ -3,13 +3,14 @@ package com.example.mgalante.marvelprojectbase.views.detailscharacter;
 import android.app.Activity;
 import android.app.Dialog;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -31,13 +33,18 @@ import com.example.mgalante.marvelprojectbase.control.adapters.ComicsRecyclerVie
 import com.example.mgalante.marvelprojectbase.utils.BlurBuilder;
 import com.example.mgalante.marvelprojectbase.views.resumecharacter.ComicContract;
 import com.example.mgalante.marvelprojectbase.views.resumecharacter.ComicPresenter;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.gson.Gson;
+import com.tooltip.Tooltip;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+
+import static com.example.mgalante.marvelprojectbase.utils.Constants.LOGTAG;
 
 public class ComicDetail extends AppCompatActivity implements ComicContract.View {
 
@@ -50,15 +57,25 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
     private Menu menu;
     private boolean isListView;
     private boolean hideDetail;
+    private boolean showFloating;
     private String urlImage;
     private Dialog dialog;
+    private Tooltip tooltipSave;
+    private Tooltip tooltipFabButton1;
+    private Tooltip tooltipFabButton2;
+    private Tooltip tooltipFabButton3;
+    private ImageButton dialogBtn;
+    private FloatingActionMenu mFloatingActionMenu;
+    private FloatingActionButton fab1;
+    private FloatingActionButton fab2;
+    private FloatingActionButton fab3;
 
     @Bind(R.id.comic_detail_list)
     RecyclerView mComicList;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     @Bind(R.id.btn_toogle)
-    FloatingActionButton mTootleBtn;
+    ImageButton mTootleBtn;
     @Bind(R.id.comic_image_detail_frame)
     FrameLayout mDetailComicMax;
     @Bind(R.id.img_comic_detail_max)
@@ -75,8 +92,9 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
         setContentView(R.layout.activity_comic_detail);
         ButterKnife.bind(this);
 
+
         isListView = true;
-        //toolbar = (Toolbar) findViewById(R.id.toolbar);
+        showFloating = true;
         setUpActionBar();
         toolbar.setTitle("Comics");
         setTitle("Comics");
@@ -106,7 +124,7 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
 
         mComicPresenter.getComics(mCharacter.getId());
         //endregion
-
+        //getWindow().setWindowAnimations(R.style.PauseDialogAnimation);
         /*
         //Transition que no funciona :(
         setEnterSharedElementCallback(new SharedElementCallback() {
@@ -176,23 +194,107 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
         */
 
         mComicsAdapter.setOnItemClickListener(onItemClickListener);
+
+        //Aqui es donde se hace la magia
         mComicList.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            //Acción a ralizar cuando ocurre un evento (creo) sobre un elemento que no es el Item
             @Override
             public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
                 if (e.getAction() == MotionEvent.ACTION_UP && hideDetail) {
-                    //Toast.makeText(getApplicationContext(), "HET", Toast.LENGTH_SHORT).show();
-                    //AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
-                    //alphaAnimation.setDuration(1000);
-                    //mDetailComicMax.startAnimation(alphaAnimation);
-                    //mDetailComicMax.setVisibility(View.INVISIBLE);
 
-                    //Dismiss Dialog
-                    hideQuickView();
+                    if (isPointInsideView(e.getRawX(), e.getRawY(), fab1))
+                        Toast.makeText(getApplicationContext(), "Entrando en modo de editar", Toast.LENGTH_LONG).show();
+                    if (isPointInsideView(e.getRawX(), e.getRawY(), fab2))
+                        Toast.makeText(getApplicationContext(), "Descargando Comic", Toast.LENGTH_LONG).show();
+                    if (isPointInsideView(e.getRawX(), e.getRawY(), fab3))
+                        Toast.makeText(getApplicationContext(), "Guardado como favorito", Toast.LENGTH_LONG).show();
+
+                        //Dismiss Dialog
+                        hideQuickView();
                     hideDetail = false;
+                }
+                if (e.getAction() == MotionEvent.ACTION_DOWN) {
+                    Log.i(LOGTAG, "OnDown");
+                }
+                if (e.getAction() == MotionEvent.ACTION_MOVE) {
+                    Log.i(LOGTAG, "ACTION_MOVE");
+
+                    if (mFloatingActionMenu != null) {
+                        if (isPointInsideView(e.getRawX(), e.getRawY(), mFloatingActionMenu)) {
+                            //doSomething()
+                            Log.i(LOGTAG, "ACTION_MOVE dialogBtn");
+                            //Display Animation
+                            if (showFloating) {
+                                //Toast.makeText(getApplicationContext(), "Comic Guardado", Toast.LENGTH_SHORT).show();
+                                showFloating = false;
+                                tooltipSave = new Tooltip.Builder(mFloatingActionMenu)
+                                        .setText("Mas opciones")
+                                        .setGravity(Gravity.BOTTOM)
+                                        .setCornerRadius(R.dimen.cardview_default_radius)
+                                        .setBackgroundColor(Color.DKGRAY)
+                                        .show();
+                                mFloatingActionMenu.open(true);
+                                //floatingMenuOptions(e);
+
+
+                            }
+                        } else {
+                            Log.i(LOGTAG, "HideFloating");
+                            if (tooltipSave != null) {
+                                tooltipSave.dismiss();
+                            }
+                            showFloating = true;
+                            mFloatingActionMenu.close(false);
+                        }
+
+                        //region FAB1 Editar
+                        if (isPointInsideView(e.getRawX(), e.getRawY(), fab1) && tooltipFabButton1 == null) {
+                            tooltipFabButton1 = new Tooltip.Builder(fab1)
+                                    .setText("Editar")
+                                    .setGravity(Gravity.TOP)
+                                    .setCornerRadius(R.dimen.cardview_default_radius)
+                                    .setBackgroundColor(Color.DKGRAY)
+                                    .show();
+                        } else if (!isPointInsideView(e.getRawX(), e.getRawY(), fab1)) {
+                            if (tooltipFabButton1 != null) {
+                                tooltipFabButton1.dismiss();
+                                tooltipFabButton1 = null;
+                            }
+                        }
+                        if (isPointInsideView(e.getRawX(), e.getRawY(), fab2) && tooltipFabButton2 == null) {
+                           tooltipFabButton2 = new Tooltip.Builder(fab2)
+                                    .setText("Descargar")
+                                    .setGravity(Gravity.TOP)
+                                    .setCornerRadius(R.dimen.cardview_default_radius)
+                                    .setBackgroundColor(Color.DKGRAY)
+                                    .show();
+                        } else if (!isPointInsideView(e.getRawX(), e.getRawY(), fab2)) {
+                            if (tooltipFabButton2 != null) {
+                                tooltipFabButton2.dismiss();
+                                tooltipFabButton2 = null;
+                            }
+                        }
+                        if (isPointInsideView(e.getRawX(), e.getRawY(), fab3) && tooltipFabButton3 == null) {
+                            tooltipFabButton3 = new Tooltip.Builder(fab3)
+                                    .setText("Guardar favorito")
+                                    .setGravity(Gravity.TOP)
+                                    .setCornerRadius(R.dimen.cardview_default_radius)
+                                    .setBackgroundColor(Color.DKGRAY)
+                                    .show();
+                        } else if (!isPointInsideView(e.getRawX(), e.getRawY(), fab3)) {
+                            if (tooltipFabButton3 != null) {
+                                tooltipFabButton3.dismiss();
+                                tooltipFabButton3 = null;
+                            }
+                        }
+                        //endregion
+
+                    }
                 }
                 return false;
             }
 
+            //accion a realizar cuando ocurre un evento (creo) sobre el Item
             @Override
             public void onTouchEvent(RecyclerView rv, MotionEvent e) {
             }
@@ -203,7 +305,31 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
         });
     }
 
+    /**
+     * Para conocer la si posición del puntero/dedo sobre la pantalla, está sobre una Vista específica
+     * @param x posicion en el eje X
+     * @param y posicion en el eje Y
+     * @param view la vista sobre la que se sitúa
+     * @return True-> si está posicionado sobre esa vista
+     */
+    public static boolean isPointInsideView(float x, float y, View view) {
+        int location[] = new int[2];
+        view.getLocationOnScreen(location);
+        int viewX = location[0];
+        int viewY = location[1];
 
+        if ((x > viewX && x < (viewX + view.getWidth())) &&
+                (y > viewY && y < (viewY + view.getHeight()))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Listener para cada elemento del RecyclerView.
+     * Puede hacerse de otra manera, implementada en la clase EventDetail
+     */
     ComicsRecyclerViewAdapter.OnItemClickListener onItemClickListener = new ComicsRecyclerViewAdapter.OnItemClickListener() {
 
         @Override
@@ -215,9 +341,10 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
         }
     };
 
-
+    /**
+     * Para mostrar el Dialog con la imagen del comic
+     */
     private void showQuickView() {
-
         final Activity activity = this;
         final View content = activity.findViewById(android.R.id.content).getRootView();
         mComicList.setNestedScrollingEnabled(false);
@@ -247,12 +374,19 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
         ImageView imageZoom = (ImageView) dialog.findViewById(R.id.imgvw_dialog);
         Glide.with(this).load(urlImage).into(imageZoom);
 
+        dialogBtn = (ImageButton) dialog.findViewById(R.id.dialog_floating_1);
+        mFloatingActionMenu = (FloatingActionMenu) dialog.findViewById(R.id.dialog_floating_menu);
+        fab1 = (FloatingActionButton) dialog.findViewById(R.id.fab1);
+        fab2 = (FloatingActionButton) dialog.findViewById(R.id.fab2);
+        fab3 = (FloatingActionButton) dialog.findViewById(R.id.fab3);
+
         dialog.show();
     }
 
+    /**
+     * Para ocultar el Dialog con la imagen del cómic
+     */
     public void hideQuickView() {
-        mComicList.setNestedScrollingEnabled(true);
-
         if (dialog != null) dialog.dismiss();
     }
 
@@ -279,7 +413,6 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
         mComicsAdapter.fillData(comicList);
         mComicsAdapter.notifyDataSetChanged();
     }
-
 
     @Override
     public void setPresenter(ComicContract.Presenter presenter) {

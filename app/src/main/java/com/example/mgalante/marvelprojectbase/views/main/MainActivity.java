@@ -11,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.speech.RecognizerIntent;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -55,12 +56,17 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.example.mgalante.marvelprojectbase.utils.Constants.VOICE_RECOGNITION_REQUEST_CODE;
 
 public class MainActivity extends BaseActivity implements MainContract.View, CharacterListCallBack {
 
     private static final String EXTRA_CHARACTER = "character";
     @Bind(R.id.heroName)
     EditText mEdTHeroName;
+    @Bind(R.id.btn_speak)
+    CircleImageView mBtnSpeak;
     @Bind(R.id.list_item)
     RecyclerView mListItem;
     @Bind(R.id.main_image)
@@ -87,6 +93,9 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this, this);
+
+        //String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        //Log.d(LOGTAG, "Token actualizado: " + refreshedToken);
 
         //Para hacer la statusbar transparente y que la activity se ponga por debajo de ella (FULLSCREEN)
         //getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
@@ -164,7 +173,12 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
                 }
             }
         });
-
+        mBtnSpeak.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startVoiceRecognitionActivity();
+            }
+        });
 
         characters = new ArrayList<>();
         adapter = new CharactersRecyclerViewAdapter(characters, this, this);
@@ -183,6 +197,18 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
         //load Saved Heroes for the first time
         recoverList();
 
+    }
+
+    private void startVoiceRecognitionActivity() {
+        // Definición del intent para realizar en análisis del mensaje
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        // Indicamos el modelo de lenguaje para el intent
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        // Definimos el mensaje que aparecerá
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Buscar Héroe...");
+        // Lanzamos la actividad esperando resultados
+        startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
     }
 
     @Override
@@ -243,7 +269,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
             options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, holderPair, holderPair2, navPair, statusPair);
         } else {
             //options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,  holderPair, holderPair2, statusPair);
-            options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,  holderPair, holderPair2);
+            options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, holderPair, holderPair2);
         }
 
         ActivityCompat.startActivity(this, i, options.toBundle());
@@ -292,6 +318,28 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
     protected void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        Toast.makeText(getApplicationContext(),"OnResult",Toast.LENGTH_SHORT).show();
+        if (requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_OK) {
+            Toast.makeText(getApplicationContext(),"on VOICE ",Toast.LENGTH_SHORT).show();
+
+            ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            String res = "";
+            for (String resultados : results) {
+                res = res + "/n" + resultados;
+            }
+            Toast.makeText(getApplicationContext(),res,Toast.LENGTH_SHORT).show();
+            /*
+            mEdTHeroName.setText(results.get(0));
+            presenter.getHeroes(results.get(0));
+            */
+        }else if(requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_CANCELED) {
+            Toast.makeText(getApplicationContext(),"Mecachis en la mar",Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
