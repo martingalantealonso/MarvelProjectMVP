@@ -24,4 +24,19 @@
         <item name="android:duration">@android:integer/config_longAnimTime</item>
     </style>
 
+    <style name="AppTheme.Splash" parent="AppTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/AppTheme.Animations.Splash</item>
+    </style>
+
+    <style name="AppTheme.Animations.Splash" parent="@android:style/Animation">
+        <item name="android:windowEnterAnimation">@anim/splash_appear</item>
+        <item name="android:windowExitAnimation">@anim/splash_disappear</item>
+    </style>
+
+
 </resources>

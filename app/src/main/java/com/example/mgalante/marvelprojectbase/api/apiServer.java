@@ -24,20 +24,24 @@ public interface apiServer {
         void onCharactersLoaded(BaseResponse<Characters> post);
     }
 
+    String TS="ts";
+    String API_KEY="apikey";
+    String HASH="hash";
+
     @GET("/v1/public/characters")
     Call<BaseResponse<Characters>> getCharactersByStartsWith(@Query("nameStartsWith") String nameStartsWith
-            , @Query("ts") String timestamp
-            , @Query("apikey") String apikey
-            , @Query("hash") String hashSignature);
+            , @Query(TS) String timestamp
+            , @Query(API_KEY) String apikey
+            , @Query(HASH) String hashSignature);
 
     @GET("/v1/public/characters/{characterId}/comics")
     Call<BaseResponse<Comic>> getComicsByCharacter(@Path("characterId") int characterId
-            , @Query("ts") String timestamp
-            , @Query("apikey") String apikey
-            , @Query("hash") String hashSignature);
+            , @Query(TS) String timestamp
+            , @Query(API_KEY) String apikey
+            , @Query(HASH) String hashSignature);
     @GET("/v1/public/characters/{characterId}/events")
     Call<BaseResponse<Event>> getEventsByCharacter(@Path("characterId") int characterId
-            , @Query("ts") String timestamp
-            , @Query("apikey") String apikey
-            , @Query("hash") String hashSignature);
+            , @Query(TS) String timestamp
+            , @Query(API_KEY) String apikey
+            , @Query(HASH) String hashSignature);
 }

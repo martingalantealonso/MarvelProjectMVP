@@ -2,10 +2,14 @@ package com.example.mgalante.marvelprojectbase.views.detailscharacter;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ContentValues;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -26,6 +30,7 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.example.mgalante.marvelprojectbase.R;
 import com.example.mgalante.marvelprojectbase.api.entities.Characters;
 import com.example.mgalante.marvelprojectbase.api.entities.Comic;
@@ -38,13 +43,18 @@ import com.github.clans.fab.FloatingActionMenu;
 import com.google.gson.Gson;
 import com.tooltip.Tooltip;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static com.example.mgalante.marvelprojectbase.R.id.imgvw_dialog;
 import static com.example.mgalante.marvelprojectbase.utils.Constants.LOGTAG;
+import static com.example.mgalante.marvelprojectbase.utils.Utils.addBitmapToMemoryCache;
+import static com.example.mgalante.marvelprojectbase.utils.Utils.getBitmapFromMemCache;
+
 
 public class ComicDetail extends AppCompatActivity implements ComicContract.View {
 
@@ -64,6 +74,7 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
     private Tooltip tooltipFabButton1;
     private Tooltip tooltipFabButton2;
     private Tooltip tooltipFabButton3;
+    private ImageView mDialogComicImg;
     private ImageButton dialogBtn;
     private FloatingActionMenu mFloatingActionMenu;
     private FloatingActionButton fab1;
@@ -124,6 +135,7 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
 
         mComicPresenter.getComics(mCharacter.getId());
         //endregion
+        //region No comments
         //getWindow().setWindowAnimations(R.style.PauseDialogAnimation);
         /*
         //Transition que no funciona :(
@@ -192,6 +204,7 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
             }
         });
         */
+        //endregion
 
         mComicsAdapter.setOnItemClickListener(onItemClickListener);
 
@@ -202,27 +215,54 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
             public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
                 if (e.getAction() == MotionEvent.ACTION_UP && hideDetail) {
 
-                    if (isPointInsideView(e.getRawX(), e.getRawY(), fab1))
-                        Toast.makeText(getApplicationContext(), "Entrando en modo de editar", Toast.LENGTH_LONG).show();
+                    if (isPointInsideView(e.getRawX(), e.getRawY(), fab1)) {
+                        //Toast.makeText(getApplicationContext(), "Entrando en modo de editar", Toast.LENGTH_LONG).show();
+
+                        Bitmap bitmap = ((GlideBitmapDrawable) mDialogComicImg.getDrawable().getCurrent()).getBitmap();
+                        addBitmapToMemoryCache("ComicImage", bitmap);
+
+                        Bitmap icon = getBitmapFromMemCache("ComicImage");
+                        Intent share = new Intent(Intent.ACTION_SEND);
+                        share.setType("image/jpeg");
+
+                        ContentValues values = new ContentValues();
+                        values.put(MediaStore.Images.Media.TITLE, "title");
+                        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+                        Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+                        OutputStream outstream;
+                        try {
+                            outstream = getContentResolver().openOutputStream(uri);
+                            icon.compress(Bitmap.CompressFormat.JPEG, 100, outstream);
+                            outstream.close();
+                        } catch (Exception ex) {
+                            System.err.println(ex.toString());
+                        }
+
+                        share.putExtra(Intent.EXTRA_STREAM, uri);
+                        startActivity(Intent.createChooser(share, "Share Image"));
+
+                    }
+
                     if (isPointInsideView(e.getRawX(), e.getRawY(), fab2))
                         Toast.makeText(getApplicationContext(), "Descargando Comic", Toast.LENGTH_LONG).show();
                     if (isPointInsideView(e.getRawX(), e.getRawY(), fab3))
                         Toast.makeText(getApplicationContext(), "Guardado como favorito", Toast.LENGTH_LONG).show();
 
-                        //Dismiss Dialog
-                        hideQuickView();
+                    //Dismiss Dialog
+                    hideQuickView();
                     hideDetail = false;
                 }
                 if (e.getAction() == MotionEvent.ACTION_DOWN) {
-                    Log.i(LOGTAG, "OnDown");
+                    //Log.i(LOGTAG, "OnDown");
                 }
                 if (e.getAction() == MotionEvent.ACTION_MOVE) {
-                    Log.i(LOGTAG, "ACTION_MOVE");
+                    //Log.i(LOGTAG, "ACTION_MOVE");
 
                     if (mFloatingActionMenu != null) {
                         if (isPointInsideView(e.getRawX(), e.getRawY(), mFloatingActionMenu)) {
                             //doSomething()
-                            Log.i(LOGTAG, "ACTION_MOVE dialogBtn");
+                            //Log.i(LOGTAG, "ACTION_MOVE dialogBtn");
                             //Display Animation
                             if (showFloating) {
                                 //Toast.makeText(getApplicationContext(), "Comic Guardado", Toast.LENGTH_SHORT).show();
@@ -235,8 +275,6 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
                                         .show();
                                 mFloatingActionMenu.open(true);
                                 //floatingMenuOptions(e);
-
-
                             }
                         } else {
                             Log.i(LOGTAG, "HideFloating");
@@ -246,8 +284,7 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
                             showFloating = true;
                             mFloatingActionMenu.close(false);
                         }
-
-                        //region FAB1 Editar
+                        //region FAB_Butons
                         if (isPointInsideView(e.getRawX(), e.getRawY(), fab1) && tooltipFabButton1 == null) {
                             tooltipFabButton1 = new Tooltip.Builder(fab1)
                                     .setText("Editar")
@@ -262,7 +299,7 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
                             }
                         }
                         if (isPointInsideView(e.getRawX(), e.getRawY(), fab2) && tooltipFabButton2 == null) {
-                           tooltipFabButton2 = new Tooltip.Builder(fab2)
+                            tooltipFabButton2 = new Tooltip.Builder(fab2)
                                     .setText("Descargar")
                                     .setGravity(Gravity.TOP)
                                     .setCornerRadius(R.dimen.cardview_default_radius)
@@ -288,7 +325,6 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
                             }
                         }
                         //endregion
-
                     }
                 }
                 return false;
@@ -307,8 +343,9 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
 
     /**
      * Para conocer la si posición del puntero/dedo sobre la pantalla, está sobre una Vista específica
-     * @param x posicion en el eje X
-     * @param y posicion en el eje Y
+     *
+     * @param x    posicion en el eje X
+     * @param y    posicion en el eje Y
      * @param view la vista sobre la que se sitúa
      * @return True-> si está posicionado sobre esa vista
      */
@@ -371,11 +408,12 @@ public class ComicDetail extends AppCompatActivity implements ComicContract.View
         }
 
         //set the custom dialog components
-        ImageView imageZoom = (ImageView) dialog.findViewById(R.id.imgvw_dialog);
+        ImageView imageZoom = (ImageView) dialog.findViewById(imgvw_dialog);
         Glide.with(this).load(urlImage).into(imageZoom);
 
         dialogBtn = (ImageButton) dialog.findViewById(R.id.dialog_floating_1);
         mFloatingActionMenu = (FloatingActionMenu) dialog.findViewById(R.id.dialog_floating_menu);
+        mDialogComicImg = (ImageView) dialog.findViewById(R.id.imgvw_dialog);
         fab1 = (FloatingActionButton) dialog.findViewById(R.id.fab1);
         fab2 = (FloatingActionButton) dialog.findViewById(R.id.fab2);
         fab3 = (FloatingActionButton) dialog.findViewById(R.id.fab3);

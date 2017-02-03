@@ -18,6 +18,7 @@ public class Constants {
     public static final String LOGTAG = "MarvelBaseProject";
     public static final Integer REQ_CREATE_FILE = 1;
     public static final int VOICE_RECOGNITION_REQUEST_CODE = 2;
+    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE=3;
 
     public static GoogleApiClient apiClient;
 

@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -39,7 +37,7 @@ public class SplashScreen extends AppCompatActivity {
 
     private void StartAnimations() {
 
-
+/*
         Animation anim = AnimationUtils.loadAnimation(this, R.anim.alpha);
         anim.reset();
         mLinearLayout.clearAnimation();
@@ -51,7 +49,7 @@ public class SplashScreen extends AppCompatActivity {
         mSplash.clearAnimation();
         mSplash.startAnimation(anim);
 
-
+*/
         splashTread = new Thread() {
             @Override
             public void run() {

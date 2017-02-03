@@ -1,27 +1,27 @@
 package com.example.mgalante.marvelprojectbase.views.resumecharacter;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.Dialog;
-import android.app.SharedElementCallback;
-import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
 import android.transition.Fade;
 import android.transition.Transition;
@@ -53,6 +53,7 @@ import com.example.mgalante.marvelprojectbase.api.entities.Url;
 import com.example.mgalante.marvelprojectbase.ormlite.DBHelper;
 import com.example.mgalante.marvelprojectbase.utils.BlurBuilder;
 import com.example.mgalante.marvelprojectbase.views.BaseActivity;
+import com.example.mgalante.marvelprojectbase.views.detailscharacter.CharacterImageDetail;
 import com.example.mgalante.marvelprojectbase.views.detailscharacter.ComicDetail;
 import com.example.mgalante.marvelprojectbase.views.detailscharacter.EventDetail;
 import com.google.android.gms.drive.DriveFolder;
@@ -69,10 +70,9 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.example.mgalante.marvelprojectbase.R.id.avatar;
 import static com.example.mgalante.marvelprojectbase.utils.Constants.LOGTAG;
+import static com.example.mgalante.marvelprojectbase.utils.Constants.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE;
 import static com.example.mgalante.marvelprojectbase.utils.Utils.addBitmapToMemoryCache;
-import static com.example.mgalante.marvelprojectbase.utils.Utils.createFileAppFolder;
 import static com.example.mgalante.marvelprojectbase.utils.Utils.createFileWithActivity;
 import static com.example.mgalante.marvelprojectbase.utils.Utils.getBitmapFromMemCache;
 import static com.example.mgalante.marvelprojectbase.utils.Utils.shareCacheImage;
@@ -99,7 +99,7 @@ public class ShowCharacter extends BaseActivity {
     TextView mFavTextView;
     @Bind(R.id.txtOther)
     TextView mOtherOptions;
-    @Bind(avatar)
+    @Bind(R.id.avatar)
     ImageView mAvatar;
     @Bind(R.id.name)
     TextView mName;
@@ -166,6 +166,9 @@ public class ShowCharacter extends BaseActivity {
             urlImage = mCharacter.getImageUrl();
         }
 
+        /**
+         * ADD IMAGE TO CHACHE
+         */
         Glide.with(this)
                 .load(urlImage)
                 .into(new GlideDrawableImageViewTarget(mAvatar) {
@@ -185,6 +188,19 @@ public class ShowCharacter extends BaseActivity {
         //mFavButton.setVisibility(View.INVISIBLE);
 
         //mFloatingButton.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+        mAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getBaseContext(), CharacterImageDetail.class);
+                Pair<View, String> holderPair = Pair.create((View) mAvatar, "t_item_character");
+
+                ActivityOptionsCompat options;
+                    options = ActivityOptionsCompat.makeSceneTransitionAnimation(thisActivity, holderPair);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                //ActivityCompat.startActivity(getApplicationContext(), i, options.toBundle());
+                startActivity(i);
+            }
+        });
         mFloatingButton.setImageResource(R.drawable.icn_morph_reverse);
         mFloatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -276,7 +292,7 @@ public class ShowCharacter extends BaseActivity {
         }
 
 
-        setEnterSharedElementCallback(new SharedElementCallback() {
+       /* setEnterSharedElementCallback(new SharedElementCallback() {
             @Override
             public View onCreateSnapshotView(Context context, Parcelable snapshot) {
                 View view = new View(context);
@@ -321,7 +337,7 @@ public class ShowCharacter extends BaseActivity {
                 mAvatar.setImageAlpha(255);
             }
         });
-
+*/
         /*
         setExitSharedElementCallback(new android.support.v4.app.SharedElementCallback() {
             @Override
@@ -371,7 +387,7 @@ public class ShowCharacter extends BaseActivity {
 
         //set the custom dialog components
         final CircleImageView mCircleDialogImage = (CircleImageView) dialog.findViewById(R.id.circleImageViewDialog);
-        TextView mDialogHeroName=(TextView)dialog.findViewById(R.id.dialog_hero_name);
+        TextView mDialogHeroName = (TextView) dialog.findViewById(R.id.dialog_hero_name);
         mDialogHeroName.setText(mCharacter.getName());
         //Glide.with(this).load(urlImage).into(mCircleDialogImage);
         mCircleDialogImage.setImageBitmap(getBitmapFromMemCache("CharacterImage"));
@@ -389,7 +405,7 @@ public class ShowCharacter extends BaseActivity {
                         //Bitmap bitmap = ((GlideBitmapDrawable) mCircleDialogImage.getDrawable().getCurrent()).getBitmap();
                         //addBitmapToMemoryCache("CharacterImage", bitmap);
                         createFileWithActivity(thisActivity, mCharacter.getName());
-                        createFileAppFolder(mCharacter.getName());
+                        //createFileAppFolder(mCharacter.getName());
                     }
                 }.start();
             }
@@ -398,7 +414,21 @@ public class ShowCharacter extends BaseActivity {
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(Intent.createChooser(shareCacheImage("CharacterImage"), "Share Image"));
+                //startActivity(Intent.createChooser(shareCacheImage("CharacterImage"), "Share Image"));
+
+                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+                    if (shouldShowRequestPermissionRationale(
+                            Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    }
+                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                            MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+                    return;
+                } else {
+                    startActivity(Intent.createChooser(shareCacheImage("CharacterImage"), "Share Image"));
+                }
+
+
             }
         });
         dialog.show();

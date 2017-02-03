@@ -320,27 +320,6 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
         super.onStop();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        Toast.makeText(getApplicationContext(),"OnResult",Toast.LENGTH_SHORT).show();
-        if (requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_OK) {
-            Toast.makeText(getApplicationContext(),"on VOICE ",Toast.LENGTH_SHORT).show();
-
-            ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            String res = "";
-            for (String resultados : results) {
-                res = res + "/n" + resultados;
-            }
-            Toast.makeText(getApplicationContext(),res,Toast.LENGTH_SHORT).show();
-            /*
-            mEdTHeroName.setText(results.get(0));
-            presenter.getHeroes(results.get(0));
-            */
-        }else if(requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_CANCELED) {
-            Toast.makeText(getApplicationContext(),"Mecachis en la mar",Toast.LENGTH_SHORT).show();
-        }
-    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(NetworkStateChanged event) {
@@ -351,5 +330,27 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
         }
     }
     //endregion
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        //Toast.makeText(getApplicationContext(),"OnResult",Toast.LENGTH_SHORT).show();
+        if (requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_OK) {
+            //Toast.makeText(getApplicationContext(),"on VOICE ",Toast.LENGTH_SHORT).show();
+
+            ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            String res = "";
+            for (String resultados : results) {
+                res = res + "/n" + resultados;
+            }
+            Toast.makeText(getApplicationContext(),res,Toast.LENGTH_SHORT).show();
+
+            mEdTHeroName.setText(results.get(0));
+            //presenter.getHeroes(results.get(0));
+
+        }else if(requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_CANCELED) {
+            Toast.makeText(getApplicationContext(),"Mecachis en la mar",Toast.LENGTH_SHORT).show();
+        }
+    }
 
 }
