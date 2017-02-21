@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -47,11 +48,34 @@
             </intent-filter>
         </receiver>
 
-        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
 
         <activity android:name=".views.detailscharacter.ComicDetail" />
         <activity android:name=".views.detailscharacter.EventDetail" />
-        <activity android:name=".views.detailscharacter.CharacterImageDetail"></activity>
+        <activity android:name=".views.detailscharacter.CharacterImageDetail" />
+        <activity
+            android:name=".wear.MyStubBroadcastActivity"
+            android:label="MyStubBroadcastActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".wear.MyDisplayActivity"
+            android:allowEmbedded="true"
+            android:exported="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.DeviceDefault.Light"/>
+
+        <receiver
+            android:name=".wear.MyPostNotificationReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.example.mgalante.marvelprojectbase.wear.SHOW_NOTIFICATION" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

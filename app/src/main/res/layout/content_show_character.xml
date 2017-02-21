@@ -72,17 +72,17 @@
                         android:textSize="17sp" />
 
                     <TextView
-                        android:id="@+id/txtDelete"
+                        android:id="@+id/txtWear"
                         style="@style/Widget.AppCompat.Button.Borderless"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
-                        android:text="Eliminar de  favoritos"
+                        android:text="Eviar a Android Wear"
                         android:textAlignment="viewStart"
                         android:textAllCaps="false"
                         android:textColor="@color/colorWhite"
                         android:textSize="17sp"
-                        android:visibility="gone" />
+                        />
 
                     <TextView
                         android:id="@+id/txtOther"

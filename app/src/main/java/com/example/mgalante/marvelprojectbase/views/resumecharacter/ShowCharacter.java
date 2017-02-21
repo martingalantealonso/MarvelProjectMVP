@@ -97,6 +97,8 @@ public class ShowCharacter extends BaseActivity {
     RelativeLayout mHolder;
     @Bind(R.id.txtInfoFav)
     TextView mFavTextView;
+    @Bind(R.id.txtWear)
+    TextView mWearTextView;
     @Bind(R.id.txtOther)
     TextView mOtherOptions;
     @Bind(R.id.avatar)
@@ -212,6 +214,12 @@ public class ShowCharacter extends BaseActivity {
             @Override
             public void onClick(View v) {
                 saveFavorite();
+            }
+        });
+        mWearTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendNotification();
             }
         });
         mOtherOptions.setOnClickListener(new View.OnClickListener() {
@@ -361,6 +369,8 @@ public class ShowCharacter extends BaseActivity {
         */
 
     }
+
+
 
     private void showCustomDialog() {
         final Activity activity = this;
@@ -727,6 +737,11 @@ public class ShowCharacter extends BaseActivity {
             // Inflate the layout for this fragment
             return inflater.inflate(R.layout.fragment_example, container, false);
         }
+    }
+
+    private void sendNotification() {
+
+
     }
 
 }

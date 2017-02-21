@@ -18,4 +18,8 @@
     <string name="error_save_comics">Error al guardar los comics</string>
     <string name="action_settings">Opciones</string>
 
+    <string name="hello">Hello World!</string>
+    <string name="title">Hello Notification!</string>
+    <string name="notification_posted">Notification posted</string>
+
 </resources>

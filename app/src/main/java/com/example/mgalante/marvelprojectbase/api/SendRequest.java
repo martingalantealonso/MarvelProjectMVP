@@ -4,9 +4,6 @@ package com.example.mgalante.marvelprojectbase.api;
 import com.example.mgalante.marvelprojectbase.utils.Constants;
 import com.example.mgalante.marvelprojectbase.utils.Utils;
 
-import java.util.Calendar;
-import java.util.TimeZone;
-
 /**
  * Created by mgalante on 17/01/17.
  *
@@ -23,23 +20,13 @@ public class SendRequest {
 
     private static final String apiKey = Constants.API_KEY;
     private static final String privateKey= Constants.PRIVATE_KEY;
-    private static final long rTime = 1000L;
 
     private long timeStamp;
     private static final String publicKey = apiKey;
     private String hashSignature;
-    private static Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 
     public String getHashSignature() {
         return hashSignature;
-    }
-
-    public static String getApiKey() {
-        return apiKey;
-    }
-
-    public static String getPrivateKey() {
-        return privateKey;
     }
 
     public static String getPublicKey() {
