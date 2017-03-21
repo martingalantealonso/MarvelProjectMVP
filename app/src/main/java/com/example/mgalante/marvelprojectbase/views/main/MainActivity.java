@@ -56,7 +56,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.example.mgalante.marvelprojectbase.utils.Constants.VOICE_RECOGNITION_REQUEST_CODE;
 
@@ -66,7 +65,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
     @Bind(R.id.heroName)
     EditText mEdTHeroName;
     @Bind(R.id.btn_speak)
-    CircleImageView mBtnSpeak;
+    ImageView mBtnSpeak;
     @Bind(R.id.list_item)
     RecyclerView mListItem;
     @Bind(R.id.main_image)
@@ -86,6 +85,11 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
     private List<Characters> characters;
     private CharactersRecyclerViewAdapter adapter;
     private DBHelper mDBHelper;
+    private boolean isChecked;
+
+    // View name of the header image. Used for activity scene transitions
+    public static final String VIEW_NAME_HEADER_IMAGE = "detail:header:image";
+
 
 
     @Override
@@ -100,6 +104,8 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
         //Para hacer la statusbar transparente y que la activity se ponga por debajo de ella (FULLSCREEN)
         //getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         //getWindow().setStatusBarColor(Color.TRANSPARENT);
+
+        //ViewCompat.setTransitionName(mMainImageView, VIEW_NAME_HEADER_IMAGE);
 
         //region Cosas que no importan (setExitSharedElement|HideKeyboard|setSupportActionbar...)
         setExitSharedElementCallback(new SharedElementCallback() {
@@ -173,10 +179,14 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
                 }
             }
         });
+
         mBtnSpeak.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startVoiceRecognitionActivity();
+                //startVoiceRecognitionActivity();
+                isChecked = !isChecked;
+                final int[] stateSet = {android.R.attr.state_checked * (isChecked ? 1 : -1)};
+                mBtnSpeak.setImageState(stateSet,true);
             }
         });
 
@@ -251,12 +261,10 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
         Pair<View, String> holderPair2 = Pair.create((View) mImgBtn, "t_imgbtn");
         Pair<View, String> navPair = null;
         Pair<View, String> statusPair = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            View navigationBar = findViewById(android.R.id.navigationBarBackground);
-            View statusBar = findViewById(android.R.id.statusBarBackground);
-            navPair = Pair.create(navigationBar, Window.NAVIGATION_BAR_BACKGROUND_TRANSITION_NAME);
-            statusPair = Pair.create(statusBar, Window.STATUS_BAR_BACKGROUND_TRANSITION_NAME);
-        }
+        View navigationBar = findViewById(android.R.id.navigationBarBackground);
+        View statusBar = findViewById(android.R.id.statusBarBackground);
+        navPair = Pair.create(navigationBar, Window.NAVIGATION_BAR_BACKGROUND_TRANSITION_NAME);
+        statusPair = Pair.create(statusBar, Window.STATUS_BAR_BACKGROUND_TRANSITION_NAME);
 
         Gson gson = new Gson();
         String json = gson.toJson(item);

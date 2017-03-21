@@ -4,12 +4,12 @@
 
   <target
     android:name="sm_vertical_line"
-    android:animation="@anim/path_morph" />
+    android:animation="@animator/path_morph" />
   <target
-    android:animation="@anim/path_morph_lg"
+    android:animation="@animator/path_morph_lg"
     android:name="lg_vertical_line" />
   <target
-    android:animation="@anim/fade_out"
+    android:animation="@animator/fade_out"
     android:name="horizontal_line" />
 
 </animated-vector>

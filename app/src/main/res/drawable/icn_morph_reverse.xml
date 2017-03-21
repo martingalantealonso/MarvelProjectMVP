@@ -3,13 +3,13 @@
   android:drawable="@drawable/icn_add">
 
   <target
-    android:animation="@anim/path_morph_reverse"
+    android:animation="@animator/path_morph_reverse"
     android:name="sm_vertical_line"/>
   <target
-    android:animation="@anim/path_morph_lg_reverse"
+    android:animation="@animator/path_morph_lg_reverse"
     android:name="lg_vertical_line" />
   <target
-    android:animation="@anim/fade_in"
+    android:animation="@animator/fade_in"
     android:name="horizontal_line" />
 
 </animated-vector>

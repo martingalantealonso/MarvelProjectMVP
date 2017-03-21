@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.mgalante.marvelprojectbase.R;
-import com.example.mgalante.marvelprojectbase.views.main.MainActivity;
+import com.example.mgalante.marvelprojectbase.views.selectactivity.SelectActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -55,7 +55,7 @@ public class SplashScreen extends AppCompatActivity {
             public void run() {
                 try {
                     sleep(2000);
-                    Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+                    Intent intent = new Intent(SplashScreen.this, SelectActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                     SplashScreen.this.finish(); //finish the SplashScreen

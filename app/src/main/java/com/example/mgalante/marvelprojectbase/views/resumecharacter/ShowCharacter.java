@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -91,6 +92,7 @@ public class ShowCharacter extends BaseActivity {
     private String urlImage;
     private DriveFolder marvelFolder;
     private Activity thisActivity;
+    private boolean isChecked;
 
     //region Binds
     @Bind(R.id.main_information_holder)
@@ -127,6 +129,8 @@ public class ShowCharacter extends BaseActivity {
     Button mBtnShowComics;
     @Bind(R.id.btnShowEvents)
     Button mBtnShowEvents;
+    @Bind(R.id.waveimg)
+    ImageView mWaveImg;
 
     //Dialog
     // @Bind(R.id.circleImageViewDialog)
@@ -197,7 +201,7 @@ public class ShowCharacter extends BaseActivity {
                 Pair<View, String> holderPair = Pair.create((View) mAvatar, "t_item_character");
 
                 ActivityOptionsCompat options;
-                    options = ActivityOptionsCompat.makeSceneTransitionAnimation(thisActivity, holderPair);
+                options = ActivityOptionsCompat.makeSceneTransitionAnimation(thisActivity, holderPair);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 //ActivityCompat.startActivity(getApplicationContext(), i, options.toBundle());
                 startActivity(i);
@@ -368,8 +372,18 @@ public class ShowCharacter extends BaseActivity {
 
         */
 
-    }
+        mWaveImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isChecked = !isChecked;
+                final int[] stateSet = {android.R.attr.state_checked * (isChecked ? 1 : -1)};
+                mWaveImg.setImageState(stateSet, true);
 
+                //checkBoxView.setImageState(stateSet, true);
+                //expandCollapseView.setImageState(stateSet, true);
+            }
+        });
+    }
 
 
     private void showCustomDialog() {
@@ -426,16 +440,18 @@ public class ShowCharacter extends BaseActivity {
             public void onClick(View v) {
                 //startActivity(Intent.createChooser(shareCacheImage("CharacterImage"), "Share Image"));
 
-                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
-                    if (shouldShowRequestPermissionRationale(
-                            Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                        if (shouldShowRequestPermissionRationale(
+                                Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                        }
+                        requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+                        return;
+                    } else {
+                        startActivity(Intent.createChooser(shareCacheImage("CharacterImage"), "Share Image"));
                     }
-                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                            MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
-                    return;
-                } else {
-                    startActivity(Intent.createChooser(shareCacheImage("CharacterImage"), "Share Image"));
                 }
 
 
