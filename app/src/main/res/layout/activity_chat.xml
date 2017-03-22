@@ -13,13 +13,15 @@
     </Toolbar>
 
     <ListView
+        android:layout_marginTop="20dp"
         android:id="@+id/in"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:stackFromBottom="true"
         android:transcriptMode="alwaysScroll"
-        tools:listitem="@layout/message"/>
+        tools:listitem="@layout/message"
+        android:layout_marginBottom="15dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"

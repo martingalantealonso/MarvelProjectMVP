@@ -281,9 +281,16 @@ public class BluetoothChatService {
     }
 
     /**
+     * Conexión como servidor:
+     *
+     * Cuando desees conectar dos dispositivos, uno deberá funcionar como servidor y tener un
+     * BluetoothServerSocket abierto. El propósito del socket de servidor es recibir solicitudes de
+     * conexiones entrantes y, cuando se acepta una, proporcionar un BluetoothSocket conectado.
+     * Cuando el BluetoothSocket se obtiene del BluetoothServerSocket, el BluetoothServerSocket
+     * puede (y debe) descartarse, a menos que desees aceptar más conexiones.
+     *
      * This thread runs while listening for incoming connections. It behaves
-     * like a server-side client. It runs until a connection is accepted
-     * (or until cancelled).
+     * like a server-side client. It runs until a connection is accepted (or until cancelled).
      */
     private class AcceptThread extends Thread {
         // The local server socket
@@ -366,6 +373,13 @@ public class BluetoothChatService {
     }
 
     /**
+     * Conexión como cliente
+     * A fin de inicializar una conexión con un dispositivo remoto (un dispositivo que mantenga un
+     * socket de servidor abierto), primero debes obtener un objeto BluetoothDevice que represente
+     * el dispositivo remoto. (La obtención de un BluetoothDevice se trata en la sección anterior,
+     * Búsqueda de dispositivos). Luego, debes usar el BluetoothDevice para obtener un
+     * BluetoothSocket e inicializar la conexión.
+     *
      * This thread runs while attempting to make an outgoing connection
      * with a device. It runs straight through; the connection either
      * succeeds or fails.
@@ -380,8 +394,7 @@ public class BluetoothChatService {
             BluetoothSocket tmp = null;
             mSocketType = secure ? "Secure" : "Insecure";
 
-            // Get a BluetoothSocket for a connection with the
-            // given BluetoothDevice
+            // Get a BluetoothSocket for a connection with the given BluetoothDevice
             try {
                 if (secure) {
                     tmp = device.createRfcommSocketToServiceRecord(
@@ -440,6 +453,11 @@ public class BluetoothChatService {
     }
 
     /**
+     * Administración de una conexión
+     *
+     * Cuando hayas conectado con éxito dos (o más) dispositivos, cada uno tendrá un
+     * BluetoothSocket conectado. Aquí es donde comienza la diversión porque puedes compartir
+     * datos entre dispositivos.
      * This thread runs during a connection with a remote device.
      * It handles all incoming and outgoing transmissions.
      */

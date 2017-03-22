@@ -2,10 +2,11 @@ package com.example.mgalante.marvelprojectbase.views.bluetoothchat;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Animatable;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +24,9 @@ public class ChatMainActivity extends AppCompatActivity implements View.OnClickL
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
     private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
     private static final int REQUEST_ENABLE_BT = 3;
+    private static final int REQUEST_ENABLE_VISIBILITY = 4;
+    private static final int SENCONDS_VISIBLE = 300;
+
 
     /**
      * Member object for the chat services
@@ -62,6 +66,7 @@ public class ChatMainActivity extends AppCompatActivity implements View.OnClickL
 
         // If the adapter is null, then Bluetooth is not supported
         if (mBluetoothAdapter == null) {
+            // Device does not support Bluetooth
             Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
             this.finish();
         }
@@ -81,13 +86,14 @@ public class ChatMainActivity extends AppCompatActivity implements View.OnClickL
                 Log.i("TAG", "btn_bluetooth");
                 if (mBluetoothAdapter != null) {
                     if (!mBluetoothAdapter.isEnabled()) {
-                        Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                        startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+                        activateBluetooth();
                         // Otherwise, setup the chat session
                     } else {
                         //setupChat();
                         mBluetoothAdapter.disable();
                         mBluetoothBtn.setImageResource(R.drawable.asl_trimclip_bluetooth_disabled);
+                        final int[] stateSet = {android.R.attr.state_checked * -1};
+                        mVisibilityBtn.setImageState(stateSet, true);
                     }
                 }
                 //Toast.makeText(getApplicationContext(), "btn_bluetooth", Toast.LENGTH_LONG).show();
@@ -95,7 +101,7 @@ public class ChatMainActivity extends AppCompatActivity implements View.OnClickL
             case R.id.btn_visibility:
                 Log.i("TAG", "btn_visibility");
                 //Toast.makeText(getApplicationContext(),"btn_visibility",Toast.LENGTH_LONG).show();
-                ensureDiscoverable();
+                ensureDiscoverable(v);
                 break;
             case R.id.btn_device_list:
                 Log.i("TAG", "btn_device_list");
@@ -110,10 +116,29 @@ public class ChatMainActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    private void ensureDiscoverable() {
-        isVisibilityChecked = !isVisibilityChecked;
-        final int[] stateSet = {android.R.attr.state_checked * (isVisibilityChecked ? 1 : -1)};
-        mVisibilityBtn.setImageState(stateSet, true);
+    private void activateBluetooth() {
+        Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+    }
+
+    private void ensureDiscoverable(View view) {
+
+        if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
+            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, SENCONDS_VISIBLE);
+            startActivityForResult(discoverableIntent, REQUEST_ENABLE_VISIBILITY);
+        } else {
+
+            Snackbar.make(view, "Please, activate Bluetooth", Snackbar.LENGTH_LONG)
+                    .setActionTextColor(Color.CYAN)
+                    .setAction("Activate", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            activateBluetooth();
+                        }
+                    })
+                    .show();
+        }
     }
 
     @Override
@@ -122,33 +147,26 @@ public class ChatMainActivity extends AppCompatActivity implements View.OnClickL
             case REQUEST_CONNECT_DEVICE_SECURE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
-                    Intent intent=new Intent(getApplicationContext(),ChatActivity.class);
-                    intent.putExtra("data",data);
-                    intent.putExtra("state",true);
-                    startActivityForResult(intent,4);
+                    Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+                    intent.putExtra("data", data);
+                    intent.putExtra("state", true);
+                    startActivityForResult(intent, 4);
                     //connectDevice(data, true);
                 }
                 break;
             case REQUEST_ENABLE_BT:
                 if (resultCode == Activity.RESULT_OK) {
-                   mBluetoothBtn.setImageResource(R.drawable.asl_trimclip_bluetooth);
+                    mBluetoothBtn.setImageResource(R.drawable.asl_trimclip_bluetooth);
                 }
+                break;
+            case REQUEST_ENABLE_VISIBILITY:
+                if (resultCode == SENCONDS_VISIBLE) {
+                    isVisibilityChecked = !isVisibilityChecked;
+                    //final int[] stateSet = {android.R.attr.state_checked * (isVisibilityChecked ? 1 : -1)};
+                    final int[] stateSet = {android.R.attr.state_checked };
+                    mVisibilityBtn.setImageState(stateSet, true);
+                }
+                break;
         }
-    }
-
-    /**
-     * Establish connection with other device
-     *
-     * @param data   An {@link Intent} with {@link DeviceListActivity#EXTRA_DEVICE_ADDRESS} extra.
-     * @param secure Socket Security type - Secure (true) , Insecure (false)
-     */
-    private void connectDevice(Intent data, boolean secure) {
-        // Get the device MAC address
-        String address = data.getExtras()
-                .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-        // Get the BluetoothDevice object
-        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
-        // Attempt to connect to the device
-        mChatService.connect(device, secure);
     }
 }
