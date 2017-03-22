@@ -122,6 +122,10 @@ public class ChatMainActivity extends AppCompatActivity implements View.OnClickL
             case REQUEST_CONNECT_DEVICE_SECURE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
+                    Intent intent=new Intent(getApplicationContext(),ChatActivity.class);
+                    intent.putExtra("data",data);
+                    intent.putExtra("state",true);
+                    startActivityForResult(intent,4);
                     //connectDevice(data, true);
                 }
                 break;

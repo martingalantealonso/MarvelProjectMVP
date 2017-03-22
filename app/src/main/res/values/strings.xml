@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">MarvelProjectBase2</string>
     <string name="escribe_el_nombre">Escribe el nombre...</string>
     <string name="busca_tu_superh_roe">Busca tu superhéroe</string>
@@ -21,9 +21,22 @@
     <string name="hello">Hello World!</string>
     <string name="title">Hello Notification!</string>
     <string name="notification_posted">Notification posted</string>
-    <string name="scanning">Scanning</string>
-    <string name="none_paired">None paired</string>
-    <string name="select_device">Select Device</string>
-    <string name="none_found">None found</string>
 
+
+    <!--  BluetoothChat -->
+    <string name="send">Send</string>
+    <string name="not_connected">You are not connected to a device</string>
+    <string name="bt_not_enabled_leaving">Bluetooth non está activado. Saíndo da aplicación</string>
+    <string name="title_connecting">connecting...</string>
+    <string name="title_connected_to">connected to <xliff:g id="device_name">%1$s</xliff:g></string>
+    <string name="title_not_connected">not connected</string>
+
+    <!--  DeviceListActivity -->
+    <string name="scanning">scanning for devices...</string>
+    <string name="select_device">select a device to connect</string>
+    <string name="none_paired">None paired</string>
+    <string name="none_found">None found</string>
+    <string name="title_paired_devices">Paired Devices</string>
+    <string name="title_other_devices">Other Available Devices</string>
+    <string name="button_scan">Buscando dispositivos</string>
 </resources>
