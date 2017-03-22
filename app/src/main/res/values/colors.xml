@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#252525</color>
     <color name="colorAccent">#40c3ff</color>
     <color name="colorFab">#f44336</color>
+    <color name="colorOrange">#ffa143</color>
+    <color name="colorPurple">#8418ff</color>
     <color name="colorOption">#b6b6b6</color>
     <color name="colorWhite">#ffffff</color>
     <color name="colorTransparent">#95000000</color>

@@ -9,6 +9,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.example.mgalante.marvelprojectbase.R;
+import com.example.mgalante.marvelprojectbase.views.bluetoothchat.ChatMainActivity;
 import com.example.mgalante.marvelprojectbase.views.main.MainActivity;
 
 import butterknife.Bind;
@@ -47,7 +48,7 @@ public class SelectActivity extends AppCompatActivity {
         optionBluetooth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                Intent intent = new Intent(getApplicationContext(), ChatMainActivity.class);
                 startActivity(intent);
             }
         });

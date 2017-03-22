@@ -21,5 +21,9 @@
     <string name="hello">Hello World!</string>
     <string name="title">Hello Notification!</string>
     <string name="notification_posted">Notification posted</string>
+    <string name="scanning">Scanning</string>
+    <string name="none_paired">None paired</string>
+    <string name="select_device">Select Device</string>
+    <string name="none_found">None found</string>
 
 </resources>
