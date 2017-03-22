@@ -65,6 +65,11 @@ public class ChatMainActivity extends AppCompatActivity implements View.OnClickL
             Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
             this.finish();
         }
+        if (mBluetoothAdapter != null) {
+            if (!mBluetoothAdapter.isEnabled()) {
+                mBluetoothBtn.setImageResource(R.drawable.asl_trimclip_bluetooth_disabled);
+            }
+        }
 
     }
 
@@ -74,8 +79,17 @@ public class ChatMainActivity extends AppCompatActivity implements View.OnClickL
         switch (v.getId()) {
             case R.id.btn_bluetooth:
                 Log.i("TAG", "btn_bluetooth");
-                Intent serverIntent = new Intent(getApplicationContext(), DeviceListActivity.class);
-                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
+                if (mBluetoothAdapter != null) {
+                    if (!mBluetoothAdapter.isEnabled()) {
+                        Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                        startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+                        // Otherwise, setup the chat session
+                    } else {
+                        //setupChat();
+                        mBluetoothAdapter.disable();
+                        mBluetoothBtn.setImageResource(R.drawable.asl_trimclip_bluetooth_disabled);
+                    }
+                }
                 //Toast.makeText(getApplicationContext(), "btn_bluetooth", Toast.LENGTH_LONG).show();
                 break;
             case R.id.btn_visibility:
@@ -85,7 +99,9 @@ public class ChatMainActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.btn_device_list:
                 Log.i("TAG", "btn_device_list");
-                Toast.makeText(getApplicationContext(), "btn_device_list", Toast.LENGTH_LONG).show();
+                Intent serverIntent = new Intent(getApplicationContext(), DeviceListActivity.class);
+                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
+                //Toast.makeText(getApplicationContext(), "btn_device_list", Toast.LENGTH_LONG).show();
                 break;
             case R.id.btn_settings:
                 Log.i("TAG", "btn_settings");
@@ -102,13 +118,17 @@ public class ChatMainActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode){
+        switch (requestCode) {
             case REQUEST_CONNECT_DEVICE_SECURE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
-                    connectDevice(data, true);
+                    //connectDevice(data, true);
                 }
                 break;
+            case REQUEST_ENABLE_BT:
+                if (resultCode == Activity.RESULT_OK) {
+                   mBluetoothBtn.setImageResource(R.drawable.asl_trimclip_bluetooth);
+                }
         }
     }
 

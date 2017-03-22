@@ -56,7 +56,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".views.bluetoothchat.ChatActivity" />
-        <activity android:name=".views.bluetoothchat.DeviceListActivity"></activity>
+        <activity android:name=".views.bluetoothchat.DeviceListActivity"/>
     </application>
 
 </manifest>
