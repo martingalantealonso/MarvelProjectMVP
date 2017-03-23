@@ -105,7 +105,9 @@
                     android:layout_gravity="bottom"
                     android:src="@drawable/wave_checkable"
                     android:scaleType="fitXY"
+                    android:visibility="gone"
                     />
+
             </FrameLayout>
 
             <!--BODY      Name & Description -->

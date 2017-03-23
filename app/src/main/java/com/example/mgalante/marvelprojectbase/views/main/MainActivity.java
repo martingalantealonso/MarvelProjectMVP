@@ -24,11 +24,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.transition.Explode;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -91,7 +93,6 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
     public static final String VIEW_NAME_HEADER_IMAGE = "detail:header:image";
 
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,6 +109,8 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
         //ViewCompat.setTransitionName(mMainImageView, VIEW_NAME_HEADER_IMAGE);
 
         //region Cosas que no importan (setExitSharedElement|HideKeyboard|setSupportActionbar...)
+
+
         setExitSharedElementCallback(new SharedElementCallback() {
             @Override
             public Parcelable onCaptureSharedElementSnapshot(View sharedElement, Matrix viewToGlobalMatrix, RectF screenBounds) {
@@ -184,9 +187,21 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
             @Override
             public void onClick(View v) {
                 //startVoiceRecognitionActivity();
+                if (isChecked) {
+                    mEdTHeroName.requestFocus();
+                    //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(mEdTHeroName, InputMethodManager.SHOW_IMPLICIT);
+                } else {
+                    mEdTHeroName.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                }
                 isChecked = !isChecked;
                 final int[] stateSet = {android.R.attr.state_checked * (isChecked ? 1 : -1)};
-                mBtnSpeak.setImageState(stateSet,true);
+                mBtnSpeak.setImageState(stateSet, true);
+
+
             }
         });
 
@@ -207,6 +222,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
         //load Saved Heroes for the first time
         recoverList();
 
+        getWindow().setEnterTransition(new Explode());
     }
 
     private void startVoiceRecognitionActivity() {
@@ -351,13 +367,13 @@ public class MainActivity extends BaseActivity implements MainContract.View, Cha
             for (String resultados : results) {
                 res = res + "/n" + resultados;
             }
-            Toast.makeText(getApplicationContext(),res,Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), res, Toast.LENGTH_SHORT).show();
 
             mEdTHeroName.setText(results.get(0));
             //presenter.getHeroes(results.get(0));
 
-        }else if(requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_CANCELED) {
-            Toast.makeText(getApplicationContext(),"Mecachis en la mar",Toast.LENGTH_SHORT).show();
+        } else if (requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_CANCELED) {
+            Toast.makeText(getApplicationContext(), "Mecachis en la mar", Toast.LENGTH_SHORT).show();
         }
     }
 

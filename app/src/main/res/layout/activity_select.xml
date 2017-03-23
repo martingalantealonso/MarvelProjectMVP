@@ -64,8 +64,17 @@
                 android:layout_height="match_parent"
                 android:scaleType="fitXY"
                 android:src="@drawable/marvelogo2"
-                android:transitionName="t_item_character" />
+                android:transitionName="t_item_character"
+                />
 
+         <!--   <ImageView
+                android:id="@+id/optionimgmarvel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:src="@drawable/marvelogo2"
+                android:transitionName="t_item_character" />
+-->
 
             <LinearLayout
                 android:layout_width="match_parent"

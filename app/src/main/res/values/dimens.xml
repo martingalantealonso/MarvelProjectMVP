@@ -41,4 +41,7 @@
     <integer name="searchback_show_arrow_head_delay">350</integer>
     <integer name="searchback_show_hide_arrow_head_duration">250</integer>
 
+    <!-- Text Circle Background-->
+    <dimen name="text_circle_corner_radious">130dp</dimen>
+
 </resources>

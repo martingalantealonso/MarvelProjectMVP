@@ -6,8 +6,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
         android:allowBackup="true"
@@ -53,12 +53,14 @@
         <activity android:name=".views.detailscharacter.ComicDetail" />
         <activity android:name=".views.detailscharacter.EventDetail" />
         <activity android:name=".views.detailscharacter.CharacterImageDetail" />
-        <activity android:name=".views.selectactivity.SelectActivity" />
+        <activity
+            android:name=".views.selectactivity.SelectActivity"
+            android:theme="@style/StatusBarTranslucent" />
         <activity android:name=".views.bluetoothchat.ChatMainActivity">
 
         </activity>
         <activity android:name=".views.bluetoothchat.ChatActivity" />
-        <activity android:name=".views.bluetoothchat.DeviceListActivity"/>
+        <activity android:name=".views.bluetoothchat.DeviceListActivity" />
     </application>
 
 </manifest>

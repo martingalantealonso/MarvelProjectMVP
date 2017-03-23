@@ -1,0 +1,15 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <solid android:color="@color/colorPurple" />
+
+    <stroke
+        android:width="2dp"
+        android:color="#000000" />
+
+    <corners
+        android:bottomLeftRadius="@dimen/text_circle_corner_radious"
+        android:bottomRightRadius="@dimen/text_circle_corner_radious"
+        android:topLeftRadius="@dimen/text_circle_corner_radious"
+        android:topRightRadius="@dimen/text_circle_corner_radious" />
+
+</shape>

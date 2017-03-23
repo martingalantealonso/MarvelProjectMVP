@@ -38,5 +38,9 @@
         <item name="android:windowExitAnimation">@anim/splash_disappear</item>
     </style>
 
+    <!-- Make the status bar traslucent -->
+    <style name="StatusBarTranslucent" parent="AppTheme">
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
 
 </resources>
